@@ -1,3 +1,4 @@
+import LayoutHome from "@/components/Layouts/Layout-Home";
 import { FC, ReactNode } from "react";
 
 type LayoutProps = {
@@ -5,7 +6,7 @@ type LayoutProps = {
 };
 
 const Layout: FC<LayoutProps> = ({ children }) => {
-  return <>{children}</>;
+  return <LayoutHome>{children}</LayoutHome>;
 };
 
 export default Layout;
