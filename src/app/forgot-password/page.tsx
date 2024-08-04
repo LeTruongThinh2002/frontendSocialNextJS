@@ -17,60 +17,51 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import Link from "next/link";
-import { login } from "@/services/auth";
-import { useRouter } from "next/navigation";
 
 // Define the schema for the form using Zod
-export const FormSchemaLogin = z.object({
+const FormSchema = z.object({
   email: z
     .string()
     .min(2, { message: "Email must be at least 2 characters." })
     .max(255, { message: "Email must be at most 255 characters" })
     .email({ message: "Invalid email address." }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters." })
-    .max(255, { message: "Password must be at most 255 characters." }),
 });
 
-const Login = () => {
-  const route = useRouter();
+const ForgotPassword = () => {
   // Use the form hook with the defined schema
-  const form = useForm<z.infer<typeof FormSchemaLogin>>({
-    resolver: zodResolver(FormSchemaLogin),
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof FormSchemaLogin>) => {
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     try {
-      const res = await login(data);
-      if (res) {
-        toast.success("Login success!", {
-          description: "Notification",
-          action: {
-            label: "Hide",
-            onClick: () => {},
-          },
-        });
-        route.push("/home");
-      } else {
-        toast.error("Login failed!", {
-          description: "Notification",
-          action: {
-            label: "Hide",
-            onClick: () => {},
-          },
-        });
+      console.log(data);
+
+      const response = await fetch("http://spider.jp/api/auth/forgotPassword", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || "An unknown error occurred");
       }
+
+      console.log("Success:", responseData);
+      alert("Password reset email has been sent!");
     } catch (error: any) {
       console.error("Error:", error.message);
-      toast.error("Login error!", {
+      toast.error("Error registering account!", {
         description: error.message,
         action: {
-          label: "Hide",
+          label: "Undo",
           onClick: () => {},
         },
       });
@@ -96,26 +87,12 @@ const Login = () => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
-              </FormControl>
-              <FormDescription>Enter your password.</FormDescription>
-              <FormMessage className="text-red-600" />
-            </FormItem>
-          )}
-        />
         <Button
           className="w-full hover:bg-green-600 border-green-600"
           type="submit"
           variant={"outline"}
         >
-          Login
+          Send verify email!
         </Button>
         <Button asChild>
           <Link
@@ -128,9 +105,9 @@ const Login = () => {
         <Button asChild>
           <Link
             className="text-sky-500 hover:underline hover:text-sky-600"
-            href={"/forgot-password"}
+            href={"/login"}
           >
-            Forgot password!
+            Login?
           </Link>
         </Button>
       </form>
@@ -138,4 +115,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
