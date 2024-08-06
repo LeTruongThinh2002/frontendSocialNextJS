@@ -17,9 +17,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { forgotPassword } from "@/services/auth";
 
 // Define the schema for the form using Zod
-const FormSchema = z.object({
+export const FormSchemaForgotPassword = z.object({
   email: z
     .string()
     .min(2, { message: "Email must be at least 2 characters." })
@@ -28,40 +30,43 @@ const FormSchema = z.object({
 });
 
 const ForgotPassword = () => {
+  const route = useRouter();
   // Use the form hook with the defined schema
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof FormSchemaForgotPassword>>({
+    resolver: zodResolver(FormSchemaForgotPassword),
     defaultValues: {
       email: "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof FormSchemaForgotPassword>) => {
     try {
-      console.log(data);
-
-      const response = await fetch("http://spider.jp/api/auth/forgotPassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.message || "An unknown error occurred");
+      const res = await forgotPassword(data);
+      if (res.success) {
+        toast.success("Notification", {
+          description: res.message as string,
+          action: {
+            label: "Hide",
+            onClick: () => {},
+          },
+        });
+        route.push("/login");
+      } else {
+        console.log(res);
+        toast.error("Notification", {
+          description: "Send email reset password failed",
+          action: {
+            label: "Hide",
+            onClick: () => {},
+          },
+        });
       }
-
-      console.log("Success:", responseData);
-      alert("Password reset email has been sent!");
     } catch (error: any) {
       console.error("Error:", error.message);
-      toast.error("Error registering account!", {
+      toast.error("Send email reset password error!", {
         description: error.message,
         action: {
-          label: "Undo",
+          label: "Hide",
           onClick: () => {},
         },
       });

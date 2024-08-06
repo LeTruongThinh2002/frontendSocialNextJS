@@ -18,10 +18,11 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { resetPassword } from "@/services/auth";
 // import { useRouter } from "next/router";
 
 // Define the schema for the form using Zod
-const FormSchema = z
+export const FormSchemaResetPassword = z
   .object({
     token: z.string(),
     email: z.string(),
@@ -46,8 +47,8 @@ const ResetPassword = () => {
   const email = router.get("email");
 
   // Use the form hook with the defined schema
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof FormSchemaResetPassword>>({
+    resolver: zodResolver(FormSchemaResetPassword),
     defaultValues: {
       token: "",
       email: "",
@@ -68,33 +69,34 @@ const ResetPassword = () => {
     }
   }, [token, email, form]);
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof FormSchemaResetPassword>) => {
     try {
-      console.log(data);
-
-      const response = await fetch("http://spider.jp/api/auth/resetPassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.message || "An unknown error occurred");
+      const res = await resetPassword(data);
+      if (res) {
+        toast.success("Notification!", {
+          description: "Reset password successfully",
+          action: {
+            label: "Hide",
+            onClick: () => {},
+          },
+        });
+        route.push("/home");
+      } else {
+        console.log(res);
+        toast.error("Notification!", {
+          description: "Reset password failed",
+          action: {
+            label: "Hide",
+            onClick: () => {},
+          },
+        });
       }
-
-      console.log("Success:", responseData);
-      alert("Password reset successfully");
-      route.push("/login");
     } catch (error: any) {
       console.error("Error:", error.message);
-      toast.error("Error reset password account!", {
+      toast.error("Error reset password!", {
         description: error.message,
         action: {
-          label: "Undo",
+          label: "Hide",
           onClick: () => {},
         },
       });
