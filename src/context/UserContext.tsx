@@ -4,7 +4,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { fetchUser, logout as apiLogout } from "../services/auth";
 
-interface User {
+export interface User {
   id: string;
   first_name: string;
   last_name: string;

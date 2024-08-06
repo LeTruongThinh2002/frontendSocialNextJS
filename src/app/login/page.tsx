@@ -47,9 +47,9 @@ const Login = () => {
   const onSubmit = async (data: z.infer<typeof FormSchemaLogin>) => {
     try {
       const res = await login(data);
-      if (res) {
-        toast.success("Login success!", {
-          description: "Notification",
+      if (res.success) {
+        toast.success("Notification", {
+          description: res.message as string,
           action: {
             label: "Hide",
             onClick: () => {},
@@ -57,8 +57,9 @@ const Login = () => {
         });
         route.push("/home");
       } else {
-        toast.error("Login failed!", {
-          description: "Notification",
+        console.log(res);
+        toast.error("Notification", {
+          description: "Login failed",
           action: {
             label: "Hide",
             onClick: () => {},

@@ -7,10 +7,7 @@ const HomePage = () => {
 
   if (!user) {
     return <div>Loading...</div>;
-  } else {
-    console.log(user);
   }
-
   return <div>HomePage</div>;
 };
 
