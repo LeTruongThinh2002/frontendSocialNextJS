@@ -17,16 +17,16 @@ const LayoutHome: FC<LayoutProps> = ({ children }) => {
   const route = useRouter();
 
   if (!token && !rf_token) {
-    route.push("/login");
+    //route.push("/login");
   }
   return (
     <UserProvider>
       <div className="h-screen w-screen grid lg:grid-cols-12 grid-rows-12">
-        <SidebarLeft className="hidden lg:block lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-13 bg-slate-400" />
+        <SidebarLeft className="hidden lg:block lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-13 w-full h-full lg:border-r lg:border-gray-600" />
         <div className="lg:col-start-2 lg:col-end-13 lg:row-start-1 lg:row-end-13 row-start-1 row-end-12">
           {children}
         </div>
-        <SidebarBottom className="bg-rose-400 lg:hidden block row-start-12 row-end-13" />
+        <SidebarBottom className="lg:hidden block row-start-12 row-end-13 w-full h-full" />
       </div>
     </UserProvider>
   );
