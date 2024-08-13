@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["res.cloudinary.com"], // Thêm hostname của hình ảnh bên ngoài vào đây
+    domains: [
+      "res.cloudinary.com",
+      "images.pexels.com",
+      "i.gifer.com",
+      "images.pexels.com",
+      "images.unsplash.com",
+    ], // Thêm hostname của hình ảnh bên ngoài vào đây
   },
 };
 
