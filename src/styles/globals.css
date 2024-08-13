@@ -10,6 +10,12 @@
   border-left-color: #09f;
   animation: spin-loading 1s ease infinite;
 }
+.edu-vic-wa-nt-beginner-700 {
+  font-family: "Edu VIC WA NT Beginner", cursive;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
 
 @keyframes spin-loading {
   0% {
@@ -45,4 +51,15 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Cho phép cuộn nội dung bên trong một phần tử cụ thể */
+.scrollable-content {
+  overflow-y: scroll;
+  -ms-overflow-style: none; /* Ẩn thanh cuộn trên Internet Explorer và Edge */
+  scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
+}
+
+.scrollable-content::-webkit-scrollbar {
+  display: none; /* Ẩn thanh cuộn trên Chrome, Safari và Opera */
 }
