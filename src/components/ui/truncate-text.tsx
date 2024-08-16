@@ -48,7 +48,9 @@ const TruncatedText: React.FC<TruncatedTextProps> = ({
         ref={textRef}
         style={{
           whiteSpace: showFullText ? "normal" : "nowrap",
-          overflow: "hidden",
+          overflowY: "auto",
+          overflowX: "hidden",
+          maxHeight: "10em",
           textOverflow: "ellipsis",
         }}
         className="text-sm font-light"

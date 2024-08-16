@@ -1,5 +1,5 @@
 const ReelPage = () => {
-  return <div>ReelPage</div>;
+  return <></>;
 };
 
 export default ReelPage;
