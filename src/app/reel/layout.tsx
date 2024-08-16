@@ -3,10 +3,16 @@ import { FC, ReactNode } from "react";
 
 type LayoutProps = {
   children: ReactNode;
+  reel: ReactNode;
 };
 
-const Layout: FC<LayoutProps> = ({ children }) => {
-  return <LayoutHome>{children}</LayoutHome>;
+const Layout: FC<LayoutProps> = ({ children, reel }) => {
+  return (
+    <LayoutHome>
+      {reel}
+      {children}
+    </LayoutHome>
+  );
 };
 
 export default Layout;

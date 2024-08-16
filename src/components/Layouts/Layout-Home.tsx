@@ -1,5 +1,4 @@
 "use client";
-import { UserProvider } from "@/context/UserContext";
 import { FC, ReactNode } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -20,15 +19,15 @@ const LayoutHome: FC<LayoutProps> = ({ children }) => {
     //route.push("/login");
   }
   return (
-    <UserProvider>
-      <div className="h-screen w-screen grid lg:grid-cols-12 grid-rows-12">
-        <SidebarLeft className="hidden lg:block lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-13 w-full h-full lg:border-r lg:border-gray-600" />
-        <div className="lg:col-start-2 lg:col-end-13 lg:row-start-1 lg:row-end-13 row-start-1 row-end-12">
-          {children}
-        </div>
-        <SidebarBottom className="lg:hidden block row-start-12 row-end-13 w-full h-full" />
+    // <UserProvider>
+    <div className="h-screen w-screen grid lg:grid-cols-12 grid-rows-12">
+      <SidebarLeft className="hidden lg:block lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-13 w-full h-full lg:border-r lg:border-gray-600" />
+      <div className="lg:col-start-2 lg:col-end-13 lg:row-start-1 lg:row-end-13 row-start-1 row-end-12 overflow-hidden">
+        {children}
       </div>
-    </UserProvider>
+      <SidebarBottom className="lg:hidden block row-start-12 row-end-13 w-full h-full" />
+    </div>
+    // </UserProvider>
   );
 };
 

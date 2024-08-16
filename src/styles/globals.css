@@ -16,6 +16,9 @@
   font-weight: 700;
   font-style: normal;
 }
+.max-h-screen-71px {
+  max-height: calc(100vh - 71px);
+}
 
 @keyframes spin-loading {
   0% {
