@@ -10,6 +10,32 @@
   border-left-color: #09f;
   animation: spin-loading 1s ease infinite;
 }
+
+.gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(
+    to top right,
+    #fcd34d,
+    #f43f5e,
+    #6366f1 90%
+  );
+  cursor: pointer;
+}
+
+/* globals.css */
+.gif-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: url("https://i.gifer.com/EAoe.gif") no-repeat;
+  background-size: cover;
+  z-index: 1601; /* Ensure it's above the loader */
+}
+
 .edu-vic-wa-nt-beginner-700 {
   font-family: "Edu VIC WA NT Beginner", cursive;
   font-optical-sizing: auto;
@@ -65,4 +91,25 @@
 
 .scrollable-content::-webkit-scrollbar {
   display: none; /* Ẩn thanh cuộn trên Chrome, Safari và Opera */
+}
+
+/* styles.css */
+
+.aspect-ratio .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.aspect-ratio:hover .overlay {
+  opacity: 1;
 }

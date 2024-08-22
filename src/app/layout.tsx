@@ -21,19 +21,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <style>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link
-            rel="preconnect"
-            href="https://fonts.gstatic.com"
-            crossOrigin="anonymous"
-          />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
 
-          <link
-            href="https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Grey+Qo&display=swap"
-            rel="stylesheet"
-          />
-        </style>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Grey+Qo&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className={inter.className}>
         <ThemeProvider
@@ -43,7 +41,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider>
-            <NextTopLoader />
+            <NextTopLoader
+              showSpinner={false}
+              color="linear-gradient(to right, yellow, red, blue)"
+            />
             <main>{children}</main>
           </TooltipProvider>
           <Toaster richColors />
