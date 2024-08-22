@@ -26,7 +26,7 @@ const SidebarLeft = ({ ...props }) => {
             <NavigationMenuItem>
               <Link href="/home" legacyBehavior passHref>
                 <NavigationMenuLink>
-                  <h1 className="text-2xl font-bold edu-vic-wa-nt-beginner-700 bg-clip-text text-transparent bg-gradient-to-tr from-yellow-300 via-rose-500 to-indigo-500 to-90% cursor-pointer">
+                  <h1 className="text-2xl font-bold edu-vic-wa-nt-beginner-700 gradient-text">
                     Spider
                   </h1>
                 </NavigationMenuLink>
