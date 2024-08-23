@@ -1,4 +1,3 @@
-import TruncatedText from "./truncate-text";
 import Link from "next/link";
 import { FaCakeCandles } from "react-icons/fa6";
 import { MdLocationOn } from "react-icons/md";
@@ -7,14 +6,14 @@ import { FaLink } from "react-icons/fa6";
 
 const ProfileIntro = () => {
   return (
-    <div className="flex flex-col gap-1 rounded-md bg-white/10 p-4">
+    <div className="flex flex-col gap-1 rounded-md md:bg-white/10 bg-transparent p-4">
       <span className="font-bold text-lg">Intro</span>
-      <div className="py-1 flex flex-col gap-1">
-        <TruncatedText
-          text={`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel
+      <div className="py-1 flex flex-col gap-2">
+        <span className="text-sm font-light">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel
           turpis vel neque ultrices placerat. Nullam non enim vel velit semper
-          pellentesque.`}
-        />
+          pellentesque.
+        </span>
         <div className="flex flex-row gap-1 text-sm items-center">
           <FaCakeCandles />
           <span>15-10-2002</span>

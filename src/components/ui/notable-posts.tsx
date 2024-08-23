@@ -3,9 +3,9 @@ import Image from "next/image";
 
 const NotablePosts = () => {
   return (
-    <div className="flex flex-col gap-3 rounded-md bg-white/10 p-4">
+    <div className="flex flex-col gap-3 rounded-md md:bg-white/10 bg-transparent p-4">
       <span className="font-bold text-lg">Notable posts</span>
-      <div className="grid grid-cols-3 gap-1">
+      <div className="grid grid-cols-3 gap-1 h-full w-full">
         {Array.from({ length: 9 }).map((_, index) => (
           <>
             <AspectRatio
