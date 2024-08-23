@@ -3,7 +3,7 @@ import Friend from "./friend";
 
 const FriendsList = () => {
   return (
-    <div className="flex flex-col gap-3 rounded-md bg-white/10 p-4">
+    <div className="flex flex-col gap-3 rounded-md md:bg-white/10 bg-transparent p-4">
       <div className="flex flex-row items-center">
         <div className="flex flex-col">
           <span className="font-bold text-lg">Friend</span>

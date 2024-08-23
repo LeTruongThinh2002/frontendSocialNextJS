@@ -1,6 +1,10 @@
+"use client";
 import HeaderTop from "@/components/Layouts/Header-top";
 import LayoutHome from "@/components/Layouts/Layout-Home";
 import SidebarProfileRight from "@/components/Layouts/Sidebar-profile-right";
+import FriendsList from "@/components/ui/friends-list";
+import NotablePosts from "@/components/ui/notable-posts";
+import ProfileIntro from "@/components/ui/profile-intro";
 import ProfileTab from "@/components/ui/profile-tab";
 import { FC, ReactNode } from "react";
 
@@ -20,6 +24,11 @@ const Layout: FC<LayoutProps> = ({ children, posts, news, reels }) => {
           <div className=" flex flex-col gap-32 justify-center items-center">
             {children}
             <div className="z-10 w-full flex flex-col gap-5">
+              <div className="lg:hidden grid md:grid-cols-3 grid-cols-1 gap-1">
+                <ProfileIntro />
+                <NotablePosts />
+                <FriendsList />
+              </div>
               {news}
               <ProfileTab posts={posts} reels={reels} />
             </div>
