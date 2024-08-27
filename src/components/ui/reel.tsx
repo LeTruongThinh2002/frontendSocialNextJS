@@ -15,7 +15,7 @@ import TruncatedText from "./truncate-text";
 import CommentDrawer from "./comment-drawer";
 
 const Reel = () => {
-  const videoRef = useRef(null);
+  const videoRef = useRef<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
