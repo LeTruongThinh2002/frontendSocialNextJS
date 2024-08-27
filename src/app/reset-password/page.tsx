@@ -22,25 +22,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPasswordAction } from "@/redux/auth/auth.action";
 import { AppDispatch, RootState } from "@/redux/store";
-
-// Define the schema for the form using Zod
-export const FormSchemaResetPassword = z
-  .object({
-    token: z.string(),
-    email: z.string(),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters." })
-      .max(255, { message: "Password must be at most 255 characters" }),
-    password_confirmation: z
-      .string()
-      .min(8, { message: "Confirm password must be at least 8 characters." })
-      .max(255, { message: "Confirm password must be at most 255 characters" }),
-  })
-  .refine((data) => data.password === data.password_confirmation, {
-    message: "Passwords don't match",
-    path: ["password_confirmation"],
-  });
+import resetPasswordSchema from "@/schema/resetPasswordSchema";
 
 const ResetPassword = () => {
   const route = useRouter();
@@ -51,8 +33,8 @@ const ResetPassword = () => {
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
   // Use the form hook with the defined schema
-  const form = useForm<z.infer<typeof FormSchemaResetPassword>>({
-    resolver: zodResolver(FormSchemaResetPassword),
+  const form = useForm<z.infer<typeof resetPasswordSchema>>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       token: "",
       email: "",
@@ -75,7 +57,7 @@ const ResetPassword = () => {
     }
   }, [token, email, form]);
 
-  const onSubmit = async (data: z.infer<typeof FormSchemaResetPassword>) => {
+  const onSubmit = async (data: z.infer<typeof resetPasswordSchema>) => {
     try {
       const resultAction = await dispatch(resetPasswordAction(data));
       const result = resetPasswordAction.fulfilled.match(resultAction);

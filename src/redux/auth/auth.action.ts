@@ -1,6 +1,8 @@
 // redux/auth/auth.action.ts
-import { FormSchemaLogin } from "@/app/login/page";
-import { FormSchemaRegister } from "@/app/register/page";
+import forgotPasswordSchema from "@/schema/forgotPasswordSchema";
+import loginSchema from "@/schema/loginSchema";
+import registerSchema from "@/schema/registerSchema";
+import resetPasswordSchema from "@/schema/resetPasswordSchema";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { z } from "zod";
@@ -19,18 +21,24 @@ interface RegisterResponse {
 
 interface ProfileResponse {
   id: number;
-  name: string;
+  first_name: string;
+  last_name: string;
   email: string;
+  country: string;
+  updated_at: Date;
+  created_at: Date;
   // Add any other fields that the profile API returns
 }
 
 // Thunk for login
 export const loginUserAction = createAsyncThunk<
   LoginResponse, // Success type
-  z.infer<typeof FormSchemaLogin>, // Input type
+  z.infer<typeof loginSchema>, // Input type
   { rejectValue: string } // Rejected value type
 >("auth/login", async (credentials, { rejectWithValue }) => {
   try {
+    // Validate the credentials using the schema
+    loginSchema.parse(credentials);
     const response = await fetch("http://spider.jp/api/auth/login", {
       method: "POST",
       headers: {
@@ -49,17 +57,22 @@ export const loginUserAction = createAsyncThunk<
       return rejectWithValue(errorData.error || "An unknown error occurred");
     }
   } catch (error) {
-    return rejectWithValue("An error occurred during login.");
+    if (error instanceof z.ZodError) {
+      return rejectWithValue(error.errors[0].message);
+    }
+    return rejectWithValue("An error occurred during the login process.");
   }
 });
 
 // Thunk for register
 export const registerUserAction = createAsyncThunk<
   RegisterResponse, // Success type
-  z.infer<typeof FormSchemaRegister>, // Input type
+  z.infer<typeof registerSchema>, // Input type
   { rejectValue: string } // Rejected value type
 >("auth/register", async (credentials, { rejectWithValue }) => {
   try {
+    // Validate the credentials using the schema
+    registerSchema.parse(credentials);
     const response = await fetch("http://spider.jp/api/auth/register", {
       method: "POST",
       headers: {
@@ -78,7 +91,10 @@ export const registerUserAction = createAsyncThunk<
       return rejectWithValue(errorData.error || "An unknown error occurred");
     }
   } catch (error) {
-    return rejectWithValue("An error occurred during registration.");
+    if (error instanceof z.ZodError) {
+      return rejectWithValue(error.errors[0].message);
+    }
+    return rejectWithValue("An error occurred during the register process.");
   }
 });
 
@@ -220,60 +236,76 @@ export const fetchUserProfileAction = createAsyncThunk<
 );
 
 // Thunk for forgot password
-export const forgotPasswordAction = createAsyncThunk(
-  "auth/forgotPassword",
-  async (credentials: any, { rejectWithValue }) => {
-    try {
-      const response = await fetch("http://spider.jp/api/auth/forgotPassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+export const forgotPasswordAction = createAsyncThunk<
+  any, // Success type
+  z.infer<typeof forgotPasswordSchema>, // Input type
+  { rejectValue: string } // Rejected value type
+>("auth/forgotPassword", async (credentials, { rejectWithValue }) => {
+  try {
+    // Validate the credentials using the schema
+    forgotPasswordSchema.parse(credentials);
+    const response = await fetch("http://spider.jp/api/auth/forgotPassword", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
 
-      if (response.ok) {
-        return {
-          success: true,
-          message: "Send email reset successfully!",
-        };
-      } else {
-        const errorData = await response.json();
-        return rejectWithValue(errorData.error || "An unknown error occurred");
-      }
-    } catch (error) {
-      return rejectWithValue(error);
+    if (response.ok) {
+      return {
+        success: true,
+        message: "Send email reset successfully!",
+      };
+    } else {
+      const errorData = await response.json();
+      return rejectWithValue(errorData.error || "An unknown error occurred");
     }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return rejectWithValue(error.errors[0].message);
+    }
+    return rejectWithValue(
+      "An error occurred during the forgot password process."
+    );
   }
-);
+});
 
 // Thunk for reset password
-export const resetPasswordAction = createAsyncThunk(
-  "auth/resetPassword",
-  async (credentials: any, { rejectWithValue }) => {
-    try {
-      const response = await fetch("http://spider.jp/api/auth/resetPassword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+export const resetPasswordAction = createAsyncThunk<
+  any, // Success type
+  z.infer<typeof resetPasswordSchema>, // Input type
+  { rejectValue: string } // Rejected value type
+>("auth/resetPassword", async (credentials, { rejectWithValue }) => {
+  try {
+    // Validate the credentials using the schema
+    resetPasswordSchema.parse(credentials);
+    const response = await fetch("http://spider.jp/api/auth/resetPassword", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
 
-      if (response.ok) {
-        return {
-          success: true,
-          message: "Reset password successfully!",
-        };
-      } else {
-        const errorData = await response.json();
-        return rejectWithValue(errorData.error || "An unknown error occurred");
-      }
-    } catch (error) {
-      return rejectWithValue(error);
+    if (response.ok) {
+      return {
+        success: true,
+        message: "Reset password successfully!",
+      };
+    } else {
+      const errorData = await response.json();
+      return rejectWithValue(errorData.error || "An unknown error occurred");
     }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return rejectWithValue(error.errors[0].message);
+    }
+    return rejectWithValue(
+      "An error occurred during the reset password process."
+    );
   }
-);
+});
 
 export const verifyEmailAction = createAsyncThunk(
   "auth/verifyEmail",
