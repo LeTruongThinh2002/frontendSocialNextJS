@@ -21,15 +21,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { forgotPasswordAction } from "@/redux/auth/auth.action";
 import { AppDispatch, RootState } from "@/redux/store";
-
-// Define the schema for the form using Zod
-export const FormSchemaForgotPassword = z.object({
-  email: z
-    .string()
-    .min(2, { message: "Email must be at least 2 characters." })
-    .max(255, { message: "Email must be at most 255 characters" })
-    .email({ message: "Invalid email address." }),
-});
+import forgotPasswordSchema from "@/schema/forgotPasswordSchema";
 
 const ForgotPassword = () => {
   const route = useRouter();
@@ -37,14 +29,14 @@ const ForgotPassword = () => {
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
   // Use the form hook with the defined schema
-  const form = useForm<z.infer<typeof FormSchemaForgotPassword>>({
-    resolver: zodResolver(FormSchemaForgotPassword),
+  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof FormSchemaForgotPassword>) => {
+  const onSubmit = async (data: z.infer<typeof forgotPasswordSchema>) => {
     try {
       const resultAction = await dispatch(forgotPasswordAction(data));
       const result = forgotPasswordAction.fulfilled.match(resultAction);

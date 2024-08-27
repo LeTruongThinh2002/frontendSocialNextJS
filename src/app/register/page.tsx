@@ -21,38 +21,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUserAction } from "@/redux/auth/auth.action";
 import { AppDispatch, RootState } from "@/redux/store";
-
-// Define the schema for the form using Zod
-export const FormSchemaRegister = z
-  .object({
-    first_name: z
-      .string()
-      .max(255, { message: "First name must be at most 255 characters." })
-      .min(1, { message: "First name must be at least 1 character." }),
-    last_name: z
-      .string()
-      .max(255, { message: "Last name must be at most 255 characters." })
-      .min(1, { message: "Last name must be at least 1 character." }),
-    email: z
-      .string()
-      .max(255, { message: "Email must be at most 255 characters." })
-      .email({ message: "Invalid email address." }),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters." }),
-    confirm_password: z
-      .string()
-      .min(8, { message: "Confirm password must be at least 8 characters." }),
-    date_of_birth: z.date({ message: "Invalid date of birth" }),
-    country: z
-      .string()
-      .min(1, { message: "Please enter a valid country" })
-      .max(255, { message: "Country must be at most 255 characters" }),
-  })
-  .refine((data) => data.password === data.confirm_password, {
-    message: "Confirm password doesn't match",
-    path: ["confirm_password"],
-  });
+import registerSchema from "@/schema/registerSchema";
 
 const Register = () => {
   const route = useRouter();
@@ -60,8 +29,8 @@ const Register = () => {
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
   // Use the form hook with the defined schema
-  const form = useForm<z.infer<typeof FormSchemaRegister>>({
-    resolver: zodResolver(FormSchemaRegister),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       first_name: "",
       last_name: "",
@@ -73,7 +42,7 @@ const Register = () => {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof FormSchemaRegister>) => {
+  const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     try {
       const resultAction = await dispatch(registerUserAction(data));
       const result = registerUserAction.fulfilled.match(resultAction);

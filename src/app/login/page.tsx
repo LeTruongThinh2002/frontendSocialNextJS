@@ -20,19 +20,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUserAction } from "@/redux/auth/auth.action";
 import { AppDispatch, RootState } from "@/redux/store";
-
-// Define the schema for the form using Zod
-export const FormSchemaLogin = z.object({
-  email: z
-    .string()
-    .min(2, { message: "Email must be at least 2 characters." })
-    .max(255, { message: "Email must be at most 255 characters" })
-    .email({ message: "Invalid email address." }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters." })
-    .max(255, { message: "Password must be at most 255 characters." }),
-});
+import loginSchema from "@/schema/loginSchema";
 
 const Login = () => {
   const route = useRouter();
@@ -40,15 +28,15 @@ const Login = () => {
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
   // Use the form hook with the defined schema
-  const form = useForm<z.infer<typeof FormSchemaLogin>>({
-    resolver: zodResolver(FormSchemaLogin),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof FormSchemaLogin>) => {
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     // Dispatch the login action and handle the result
     const resultAction = await dispatch(loginUserAction(data));
 
