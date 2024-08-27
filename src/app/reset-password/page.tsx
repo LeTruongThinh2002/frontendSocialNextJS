@@ -18,11 +18,12 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import Link from "next/link";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPasswordAction } from "@/redux/auth/auth.action";
 import { AppDispatch, RootState } from "@/redux/store";
 import resetPasswordSchema from "@/schema/resetPasswordSchema";
+import LoadingCircle from "@/components/ui/loadingCircle";
 
 const ResetPassword = () => {
   const route = useRouter();
@@ -92,99 +93,101 @@ const ResetPassword = () => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="token"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  disabled
-                  type="hidden"
-                  defaultValue={token}
-                  placeholder={token}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage className="text-red-600" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  disabled
-                  defaultValue={email}
-                  placeholder={email}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage className="text-red-600" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
-              </FormControl>
-              <FormDescription>Enter your new password.</FormDescription>
-              <FormMessage className="text-red-600" />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password_confirmation"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="" {...field} />
-              </FormControl>
-              <FormDescription>Confirm your new password.</FormDescription>
-              <FormMessage className="text-red-600" />
-            </FormItem>
-          )}
-        />
-        <Button
-          className="w-full hover:bg-green-600 border-green-600"
-          type="submit"
-          variant={"outline"}
-          disabled={loading}
-        >
-          {loading ? "Resetting..." : "Reset password"}
-        </Button>
-        {error && <div className="text-red-600 mt-4">{error}</div>}
-        <Button asChild>
-          <Link
-            className="text-sky-500 hover:underline hover:text-sky-600"
-            href={"/register"}
+    <Suspense fallback={<LoadingCircle />}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="token"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    disabled
+                    type="hidden"
+                    defaultValue={token}
+                    placeholder={token}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage className="text-red-600" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled
+                    defaultValue={email}
+                    placeholder={email}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage className="text-red-600" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="••••••••" {...field} />
+                </FormControl>
+                <FormDescription>Enter your new password.</FormDescription>
+                <FormMessage className="text-red-600" />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password_confirmation"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm password</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="" {...field} />
+                </FormControl>
+                <FormDescription>Confirm your new password.</FormDescription>
+                <FormMessage className="text-red-600" />
+              </FormItem>
+            )}
+          />
+          <Button
+            className="w-full hover:bg-green-600 border-green-600"
+            type="submit"
+            variant={"outline"}
+            disabled={loading}
           >
-            Register?
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link
-            className="text-sky-500 hover:underline hover:text-sky-600"
-            href={"/login"}
-          >
-            Login?
-          </Link>
-        </Button>
-      </form>
-    </Form>
+            {loading ? "Resetting..." : "Reset password"}
+          </Button>
+          {error && <div className="text-red-600 mt-4">{error}</div>}
+          <Button asChild>
+            <Link
+              className="text-sky-500 hover:underline hover:text-sky-600"
+              href={"/register"}
+            >
+              Register?
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link
+              className="text-sky-500 hover:underline hover:text-sky-600"
+              href={"/login"}
+            >
+              Login?
+            </Link>
+          </Button>
+        </form>
+      </Form>
+    </Suspense>
   );
 };
 
