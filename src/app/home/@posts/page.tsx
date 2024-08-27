@@ -4,8 +4,8 @@ const Posts = () => {
   return (
     <>
       <div className="flex flex-col gap-5 h-full w-full">
-        {[1, 2, 3, 4, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map((item) => (
-          <PostCard key={item} />
+        {Array.from({ length: 10 }).map((_, index) => (
+          <PostCard key={index} />
         ))}
       </div>
     </>
