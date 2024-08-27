@@ -1,8 +1,8 @@
 "use client";
-
-// context/UserContext.tsx
-import { createContext, useContext, useState, useEffect } from "react";
-import { fetchUser, logout as apiLogout } from "../services/auth";
+import { createContext, useEffect } from "react";
+import { fetchUserProfileAction, logoutAction } from "@/redux/auth/auth.action";
+import { AppDispatch, RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
 
 export interface User {
   id: string;
@@ -19,7 +19,7 @@ export interface User {
 
 interface UserContextType {
   user: User | null;
-  setUser: (user: User | null) => void;
+  fetchUserProfile: () => void;
   logout: () => void;
 }
 
@@ -28,41 +28,34 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+
+  // Access the user from the Redux store
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  // Action to fetch the user profile
+  const fetchUserProfile = () => {
+    dispatch(fetchUserProfileAction());
+  };
+
+  // Action to log out
+  const logout = () => {
+    dispatch(logoutAction());
+  };
 
   useEffect(() => {
-    const getUser = async () => {
-      const userData = await fetchUser();
-      if (userData) {
-        setUser(userData);
-      }
-    };
-
-    getUser();
+    fetchUserProfile();
 
     const interval = setInterval(() => {
-      getUser();
+      fetchUserProfile();
     }, 5 * 60 * 1000); // 5 minutes
 
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, []);
 
-  const logout = () => {
-    apiLogout();
-    setUser(null);
-  };
-
   return (
-    <UserContext.Provider value={{ user, setUser, logout }}>
+    <UserContext.Provider value={{ user, fetchUserProfile, logout }}>
       {children}
     </UserContext.Provider>
   );
-};
-
-export const useUser = () => {
-  const context = useContext(UserContext);
-  if (context === undefined) {
-    throw new Error("useUser must be used within a UserProvider");
-  }
-  return context;
 };

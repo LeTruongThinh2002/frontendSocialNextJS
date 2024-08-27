@@ -1,4 +1,5 @@
 "use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,8 +19,9 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { resetPassword } from "@/services/auth";
-// import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { resetPasswordAction } from "@/redux/auth/auth.action";
+import { AppDispatch, RootState } from "@/redux/store";
 
 // Define the schema for the form using Zod
 export const FormSchemaResetPassword = z
@@ -36,7 +38,7 @@ export const FormSchemaResetPassword = z
       .max(255, { message: "Confirm password must be at most 255 characters" }),
   })
   .refine((data) => data.password === data.password_confirmation, {
-    message: "Confirm password don't match",
+    message: "Passwords don't match",
     path: ["password_confirmation"],
   });
 
@@ -45,6 +47,8 @@ const ResetPassword = () => {
   const router = useSearchParams();
   const token = router.get("token");
   const email = router.get("email");
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
 
   // Use the form hook with the defined schema
   const form = useForm<z.infer<typeof FormSchemaResetPassword>>({
@@ -57,11 +61,13 @@ const ResetPassword = () => {
     },
   });
 
+  // Redirect to login if token or email is missing
   if (!token || !email) {
     route.push("/login");
     redirect("/login");
   }
 
+  // Set token and email in the form's default values
   useEffect(() => {
     if (token && email) {
       form.setValue("token", token as string);
@@ -71,20 +77,21 @@ const ResetPassword = () => {
 
   const onSubmit = async (data: z.infer<typeof FormSchemaResetPassword>) => {
     try {
-      const res = await resetPassword(data);
-      if (res) {
+      const resultAction = await dispatch(resetPasswordAction(data));
+      const result = resetPasswordAction.fulfilled.match(resultAction);
+
+      if (result) {
         toast.success("Notification!", {
-          description: "Reset password successfully",
+          description: "Password reset successfully",
           action: {
             label: "Hide",
             onClick: () => {},
           },
         });
-        route.push("/home");
+        route.push("/login");
       } else {
-        console.log(res);
         toast.error("Notification!", {
-          description: "Reset password failed",
+          description: "Password reset failed",
           action: {
             label: "Hide",
             onClick: () => {},
@@ -92,8 +99,7 @@ const ResetPassword = () => {
         });
       }
     } catch (error: any) {
-      console.error("Error:", error.message);
-      toast.error("Error reset password!", {
+      toast.error("Error resetting password!", {
         description: error.message,
         action: {
           label: "Hide",
@@ -111,7 +117,6 @@ const ResetPassword = () => {
           name="token"
           render={({ field }) => (
             <FormItem>
-              {/* <FormLabel>Email</FormLabel> */}
               <FormControl>
                 <Input
                   disabled
@@ -121,9 +126,6 @@ const ResetPassword = () => {
                   {...field}
                 />
               </FormControl>
-              {/* <FormDescription>
-                Please enter your email address.
-              </FormDescription> */}
               <FormMessage className="text-red-600" />
             </FormItem>
           )}
@@ -142,9 +144,6 @@ const ResetPassword = () => {
                   {...field}
                 />
               </FormControl>
-              {/* <FormDescription>
-                Please enter your email address.
-              </FormDescription> */}
               <FormMessage className="text-red-600" />
             </FormItem>
           )}
@@ -158,7 +157,7 @@ const ResetPassword = () => {
               <FormControl>
                 <Input type="password" placeholder="••••••••" {...field} />
               </FormControl>
-              <FormDescription>Enter your password.</FormDescription>
+              <FormDescription>Enter your new password.</FormDescription>
               <FormMessage className="text-red-600" />
             </FormItem>
           )}
@@ -172,7 +171,7 @@ const ResetPassword = () => {
               <FormControl>
                 <Input type="password" placeholder="" {...field} />
               </FormControl>
-              <FormDescription>Enter your confirm password.</FormDescription>
+              <FormDescription>Confirm your new password.</FormDescription>
               <FormMessage className="text-red-600" />
             </FormItem>
           )}
@@ -181,9 +180,11 @@ const ResetPassword = () => {
           className="w-full hover:bg-green-600 border-green-600"
           type="submit"
           variant={"outline"}
+          disabled={loading}
         >
-          Reset password
+          {loading ? "Resetting..." : "Reset password"}
         </Button>
+        {error && <div className="text-red-600 mt-4">{error}</div>}
         <Button asChild>
           <Link
             className="text-sky-500 hover:underline hover:text-sky-600"

@@ -1,79 +1,66 @@
 "use client";
+
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { BiSolidCheckShield, BiSolidShieldX } from "react-icons/bi";
 import { Button } from "@/components/ui/button";
-// import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { verifyEmailAction } from "@/redux/auth/auth.action";
 
 const VerifyEmail = () => {
   const route = useRouter();
   const url = usePathname();
   const id = url.split("/")[2];
   const token = url.split("/")[3];
-
   const router = useSearchParams();
   const expires = router.get("expires");
   const signature = router.get("signature");
 
-  const [loading, setLoading] = useState(true);
-  const [check, setCheck] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    verifyEmail();
-  }, [id, token, router]);
+    if (id && token && expires && signature) {
+      dispatch(verifyEmailAction({ id, token, expires, signature }));
+    }
+  }, [id, token, expires, signature, dispatch]);
 
-  const verifyEmail = async () => {
-    try {
-      setLoading(true);
-
-      const response = await fetch(
-        `http://spider.jp/api/auth/email/verify/${id}/${token}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ expires, signature }),
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        setCheck(false);
-        throw new Error(responseData.message || "An unknown error occurred");
-      }
-
-      setCheck(true);
-      console.log("Success:", responseData);
-      alert("Verify successfully");
-      setLoading(false);
-    } catch (error: any) {
-      setCheck(false);
-      setLoading(false);
-
-      console.error("Error:", error.message);
-      toast.error("Error reset password account!", {
-        description: error.message,
+  useEffect(() => {
+    if (error && expires && signature) {
+      toast.error("Verification failed", {
+        description: error,
         action: {
-          label: "Undo",
+          label: "Retry",
+          onClick: () => {
+            dispatch(verifyEmailAction({ id, token, expires, signature }));
+          },
+        },
+      });
+    }
+
+    if (!error) {
+      toast.success("Verification successful", {
+        description: "Email verified successfully",
+        action: {
+          label: "Hide",
           onClick: () => {},
         },
       });
     }
-  };
+  }, [error, dispatch]);
 
   return (
     <div className="text-center">
       {loading ? (
         <div className="spinner-loading"></div>
-      ) : check ? (
+      ) : !error ? (
         <>
           <div className="flex justify-center py-2">
             <BiSolidCheckShield className="text-yellow-500" size={"3em"} />
           </div>
-          <div>Email verify successfully!</div>
+          <div>Email verified successfully!</div>
         </>
       ) : (
         <>
@@ -81,8 +68,8 @@ const VerifyEmail = () => {
             <BiSolidShieldX className="text-red-500" size={"3em"} />
           </div>
           <div>
-            Email verify failed. Please try again refresh page or try a new link
-            verify!
+            Email verification failed. Please try refreshing the page or using a
+            new verification link.
           </div>
         </>
       )}

@@ -18,7 +18,9 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { forgotPassword } from "@/services/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { forgotPasswordAction } from "@/redux/auth/auth.action";
+import { AppDispatch, RootState } from "@/redux/store";
 
 // Define the schema for the form using Zod
 export const FormSchemaForgotPassword = z.object({
@@ -31,6 +33,9 @@ export const FormSchemaForgotPassword = z.object({
 
 const ForgotPassword = () => {
   const route = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
+
   // Use the form hook with the defined schema
   const form = useForm<z.infer<typeof FormSchemaForgotPassword>>({
     resolver: zodResolver(FormSchemaForgotPassword),
@@ -41,10 +46,11 @@ const ForgotPassword = () => {
 
   const onSubmit = async (data: z.infer<typeof FormSchemaForgotPassword>) => {
     try {
-      const res = await forgotPassword(data);
-      if (res.success) {
+      const resultAction = await dispatch(forgotPasswordAction(data));
+      const result = forgotPasswordAction.fulfilled.match(resultAction);
+      if (result) {
         toast.success("Notification", {
-          description: res.message as string,
+          description: "Please check your email for the reset link.",
           action: {
             label: "Hide",
             onClick: () => {},
@@ -52,7 +58,6 @@ const ForgotPassword = () => {
         });
         route.push("/login");
       } else {
-        console.log(res);
         toast.error("Notification", {
           description: "Send email reset password failed",
           action: {
@@ -62,7 +67,6 @@ const ForgotPassword = () => {
         });
       }
     } catch (error: any) {
-      console.error("Error:", error.message);
       toast.error("Send email reset password error!", {
         description: error.message,
         action: {
@@ -96,9 +100,11 @@ const ForgotPassword = () => {
           className="w-full hover:bg-green-600 border-green-600"
           type="submit"
           variant={"outline"}
+          disabled={loading}
         >
-          Send verify email!
+          {loading ? "Sending..." : "Send verify email!"}
         </Button>
+        {error && <div className="text-red-600 mt-4">{error}</div>}
         <Button asChild>
           <Link
             className="text-sky-500 hover:underline hover:text-sky-600"

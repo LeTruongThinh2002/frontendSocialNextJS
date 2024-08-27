@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from "nextjs-toploader";
+import { UserProvider } from "@/context/UserContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -45,7 +46,9 @@ export default function RootLayout({
               showSpinner={false}
               color="linear-gradient(to right, yellow, red, blue)"
             />
-            <main>{children}</main>
+            <UserProvider>
+              <main>{children}</main>
+            </UserProvider>
           </TooltipProvider>
           <Toaster richColors />
         </ThemeProvider>
