@@ -1,4 +1,4 @@
-const LoadingHomePage = () => {
+const LoadingCircle = () => {
   return (
     <div className="w-full h-full flex justify-center items-center">
       <div className="spinner-loading"></div>
@@ -6,4 +6,4 @@ const LoadingHomePage = () => {
   );
 };
 
-export default LoadingHomePage;
+export default LoadingCircle;
