@@ -1,4 +1,5 @@
 "use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,8 +17,10 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { toast } from "sonner";
-import { register } from "@/services/auth";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUserAction } from "@/redux/auth/auth.action";
+import { AppDispatch, RootState } from "@/redux/store";
 
 // Define the schema for the form using Zod
 export const FormSchemaRegister = z
@@ -25,7 +28,7 @@ export const FormSchemaRegister = z
     first_name: z
       .string()
       .max(255, { message: "First name must be at most 255 characters." })
-      .min(1, { message: "First name must be at most 1 character." }),
+      .min(1, { message: "First name must be at least 1 character." }),
     last_name: z
       .string()
       .max(255, { message: "Last name must be at most 255 characters." })
@@ -44,14 +47,18 @@ export const FormSchemaRegister = z
     country: z
       .string()
       .min(1, { message: "Please enter a valid country" })
-      .max(255, { message: "Country must be at least 255 characters" }),
+      .max(255, { message: "Country must be at most 255 characters" }),
   })
   .refine((data) => data.password === data.confirm_password, {
-    message: "Confirm password don't match",
+    message: "Confirm password doesn't match",
     path: ["confirm_password"],
   });
+
 const Register = () => {
   const route = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
+
   // Use the form hook with the defined schema
   const form = useForm<z.infer<typeof FormSchemaRegister>>({
     resolver: zodResolver(FormSchemaRegister),
@@ -68,8 +75,9 @@ const Register = () => {
 
   const onSubmit = async (data: z.infer<typeof FormSchemaRegister>) => {
     try {
-      const res = await register(data);
-      if (res) {
+      const resultAction = await dispatch(registerUserAction(data));
+      const result = registerUserAction.fulfilled.match(resultAction);
+      if (result) {
         toast.success("Register success!", {
           description: "Notification",
           action: {
@@ -90,7 +98,7 @@ const Register = () => {
     } catch (error: any) {
       console.error("Error:", error.message);
       toast.error("Error registering account!", {
-        description: error.message,
+        description: error.message || "Unknown error",
         action: {
           label: "Hide",
           onClick: () => {},
@@ -109,7 +117,7 @@ const Register = () => {
             <FormItem>
               <FormLabel>First name</FormLabel>
               <FormControl>
-                <Input placeholder="Hitler" {...field} />
+                <Input placeholder="John" {...field} />
               </FormControl>
               <FormDescription>Enter your first name</FormDescription>
               <FormMessage className="text-red-600" />
@@ -123,7 +131,7 @@ const Register = () => {
             <FormItem>
               <FormLabel>Last name</FormLabel>
               <FormControl>
-                <Input placeholder="Adolf" {...field} />
+                <Input placeholder="Doe" {...field} />
               </FormControl>
               <FormDescription>Enter your last name</FormDescription>
               <FormMessage className="text-red-600" />
@@ -167,9 +175,9 @@ const Register = () => {
             <FormItem>
               <FormLabel>Confirm password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="" {...field} />
+                <Input type="password" placeholder="••••••••" {...field} />
               </FormControl>
-              <FormDescription>Enter your confirm password.</FormDescription>
+              <FormDescription>Confirm your password.</FormDescription>
               <FormMessage className="text-red-600" />
             </FormItem>
           )}
@@ -216,8 +224,9 @@ const Register = () => {
           className="w-full hover:bg-green-600 border-green-600"
           type="submit"
           variant={"outline"}
+          disabled={loading}
         >
-          Register
+          {loading ? "Registering..." : "Register"}
         </Button>
         <Button asChild>
           <Link
@@ -228,6 +237,7 @@ const Register = () => {
           </Link>
         </Button>
       </form>
+      {error && <div className="text-red-600 mt-4">{error}</div>}
     </Form>
   );
 };

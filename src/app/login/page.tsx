@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,8 +16,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import Link from "next/link";
-import { login } from "@/services/auth";
 import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUserAction } from "@/redux/auth/auth.action";
+import { AppDispatch, RootState } from "@/redux/store";
 
 // Define the schema for the form using Zod
 export const FormSchemaLogin = z.object({
@@ -35,6 +36,9 @@ export const FormSchemaLogin = z.object({
 
 const Login = () => {
   const route = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
+  const { loading, error } = useSelector((state: RootState) => state.auth);
+
   // Use the form hook with the defined schema
   const form = useForm<z.infer<typeof FormSchemaLogin>>({
     resolver: zodResolver(FormSchemaLogin),
@@ -45,36 +49,21 @@ const Login = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof FormSchemaLogin>) => {
-    try {
-      const res = await login(data);
-      if (res.success) {
-        toast.success("Notification", {
-          description: res.message as string,
-          action: {
-            label: "Hide",
-            onClick: () => {},
-          },
-        });
-        route.push("/home");
-      } else {
-        console.log(res);
-        toast.error("Notification", {
-          description: "Login failed",
-          action: {
-            label: "Hide",
-            onClick: () => {},
-          },
-        });
-      }
-    } catch (error: any) {
-      console.error("Error:", error.message);
+    // Dispatch the login action and handle the result
+    const resultAction = await dispatch(loginUserAction(data));
+
+    if (loginUserAction.rejected.match(resultAction)) {
+      // If login fails, show error message
       toast.error("Login error!", {
-        description: error.message,
+        description: resultAction.payload as string,
         action: {
           label: "Hide",
           onClick: () => {},
         },
       });
+    } else if (loginUserAction.fulfilled.match(resultAction)) {
+      // If login succeeds, redirect to the homepage or another route
+      route.push("/home"); // Adjust the route as needed
     }
   };
 
@@ -115,8 +104,9 @@ const Login = () => {
           className="w-full hover:bg-green-600 border-green-600"
           type="submit"
           variant={"outline"}
+          disabled={loading}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </Button>
         <Button asChild>
           <Link
@@ -135,6 +125,7 @@ const Login = () => {
           </Link>
         </Button>
       </form>
+      {error && <div className="text-red-600 mt-4">{error}</div>}
     </Form>
   );
 };
