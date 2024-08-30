@@ -6,7 +6,6 @@ const NotablePosts = async () => {
   // Thay thế setTimeout bằng một hàm fetch thực tế
   const fetchNews = async () => {
     // Giả lập fetch data
-    await new Promise((resolve) => setTimeout(resolve, 3000));
     return Array.from({ length: 9 }, (_, index) => ({ id: index }));
   };
 
