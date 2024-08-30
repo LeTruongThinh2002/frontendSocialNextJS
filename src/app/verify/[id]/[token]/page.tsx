@@ -1,7 +1,7 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { BiSolidCheckShield, BiSolidShieldX } from "react-icons/bi";
 import { Button } from "@/components/ui/button";
@@ -10,59 +10,66 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { verifyEmailAction } from "@/redux/auth/auth.action";
 
 const VerifyEmail = () => {
-  const route = useRouter();
-  const url = usePathname();
-  const id = url.split("/")[2];
-  const token = url.split("/")[3];
-  const router = useSearchParams();
-  const expires = router.get("expires");
-  const signature = router.get("signature");
+  const router = useRouter();
+  const { id, token } = useParams();
+  const searchParams = useSearchParams();
+  const expires = searchParams.get("expires");
+  const signature = searchParams.get("signature");
 
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
+  const [verificationAttempted, setVerificationAttempted] = useState(false);
 
   useEffect(() => {
     if (id && token && expires && signature) {
-      dispatch(verifyEmailAction({ id, token, expires, signature }));
+      dispatch(
+        verifyEmailAction({
+          id: id.toString(),
+          token: token.toString(),
+          expires,
+          signature,
+        })
+      )
+        .then(() => {
+          setVerificationAttempted(true);
+          toast.success("Verification successful", {
+            description: "Email verified successfully",
+          });
+        })
+        .catch((err) => {
+          setVerificationAttempted(true);
+          toast.error("Verification failed", {
+            description: err.message,
+            action: {
+              label: "Retry",
+              onClick: () => {
+                dispatch(
+                  verifyEmailAction({
+                    id: Array.isArray(id) ? id[0] : id,
+                    token: Array.isArray(token) ? token[0] : token,
+                    expires,
+                    signature,
+                  })
+                );
+              },
+            },
+          });
+        });
     }
   }, [id, token, expires, signature, dispatch]);
-
-  useEffect(() => {
-    if (error && expires && signature) {
-      toast.error("Verification failed", {
-        description: error,
-        action: {
-          label: "Retry",
-          onClick: () => {
-            dispatch(verifyEmailAction({ id, token, expires, signature }));
-          },
-        },
-      });
-    }
-
-    if (!error) {
-      toast.success("Verification successful", {
-        description: "Email verified successfully",
-        action: {
-          label: "Hide",
-          onClick: () => {},
-        },
-      });
-    }
-  }, [error, dispatch]);
 
   return (
     <div className="text-center">
       {loading ? (
-        <div className="spinner-loading"></div>
-      ) : !error ? (
+        <div className="spinner-loading">Verifying email...</div>
+      ) : !error && verificationAttempted ? (
         <>
           <div className="flex justify-center py-2">
             <BiSolidCheckShield className="text-yellow-500" size={"3em"} />
           </div>
           <div>Email verified successfully!</div>
         </>
-      ) : (
+      ) : error ? (
         <>
           <div className="flex justify-center py-2">
             <BiSolidShieldX className="text-red-500" size={"3em"} />
@@ -72,16 +79,16 @@ const VerifyEmail = () => {
             new verification link.
           </div>
         </>
+      ) : null}
+      {!loading && (
+        <Button
+          variant={"outline"}
+          className="mt-3 hover:bg-green-600 border-green-600"
+          onClick={() => router.push("/login")}
+        >
+          Back to Login
+        </Button>
       )}
-      <Button
-        variant={"outline"}
-        className="mt-3 hover:bg-green-600 border-green-600"
-        onClick={() => {
-          route.push("/login");
-        }}
-      >
-        Back
-      </Button>
     </div>
   );
 };

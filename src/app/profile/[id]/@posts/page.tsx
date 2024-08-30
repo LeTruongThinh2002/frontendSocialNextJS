@@ -5,10 +5,18 @@ import { MdVideoLibrary } from "react-icons/md";
 import { FaHeart } from "react-icons/fa";
 import { IoIosChatbubbles } from "react-icons/io";
 
-const Posts = () => {
+const Posts = async () => {
+  // Thay thế setTimeout bằng một hàm fetch thực tế
+  const fetchNews = async () => {
+    // Giả lập fetch data
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+    return Array.from({ length: 10 }, (_, index) => ({ id: index }));
+  };
+
+  const newsItems = await fetchNews();
   return (
     <div className="grid grid-cols-3 gap-1">
-      {Array.from({ length: 4 }).map((_, index) => (
+      {newsItems.map((_, index) => (
         <>
           <AspectRatio
             ratio={1 / 1}
