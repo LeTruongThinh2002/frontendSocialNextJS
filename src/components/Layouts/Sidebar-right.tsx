@@ -7,7 +7,6 @@ const SidebarRight = async ({ ...prop }) => {
   // Thay thế setTimeout bằng một hàm fetch thực tế
   const fetchNews = async () => {
     // Giả lập fetch data
-    await new Promise((resolve) => setTimeout(resolve, 60000));
     return Array.from({ length: 5 }, (_, index) => ({ id: index }));
   };
 
