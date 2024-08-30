@@ -24,7 +24,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import registerSchema from "@/schema/registerSchema";
 
 const Register = () => {
-  const route = useRouter();
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
@@ -45,33 +45,20 @@ const Register = () => {
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     try {
       const resultAction = await dispatch(registerUserAction(data));
-      const result = registerUserAction.fulfilled.match(resultAction);
-      if (result) {
-        toast.success("Register success!", {
-          description: "Notification",
-          action: {
-            label: "Hide",
-            onClick: () => {},
-          },
+      if (registerUserAction.fulfilled.match(resultAction)) {
+        toast.success("Registration successful!", {
+          description: "You can now log in to your account.",
         });
-        route.push("/home");
+        router.push("/login");
       } else {
-        toast.error("Register failed!", {
-          description: "Notification",
-          action: {
-            label: "Hide",
-            onClick: () => {},
-          },
+        toast.error("Registration failed", {
+          description: resultAction.error?.message || "Unknown error occurred",
         });
       }
     } catch (error: any) {
       console.error("Error:", error.message);
-      toast.error("Error registering account!", {
-        description: error.message || "Unknown error",
-        action: {
-          label: "Hide",
-          onClick: () => {},
-        },
+      toast.error("Error registering account", {
+        description: error.message || "Unknown error occurred",
       });
     }
   };
@@ -192,18 +179,13 @@ const Register = () => {
         <Button
           className="w-full hover:bg-green-600 border-green-600"
           type="submit"
-          variant={"outline"}
+          variant="outline"
           disabled={loading}
         >
           {loading ? "Registering..." : "Register"}
         </Button>
-        <Button asChild>
-          <Link
-            className="text-sky-500 hover:underline hover:text-sky-600"
-            href={"/login"}
-          >
-            Login?
-          </Link>
+        <Button variant="link" asChild>
+          <Link href="/login">Already have an account? Log in</Link>
         </Button>
       </form>
       {error && <div className="text-red-600 mt-4">{error}</div>}

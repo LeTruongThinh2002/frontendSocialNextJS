@@ -87,26 +87,15 @@ const ResetPassword = () => {
     return <LoadingCircle />;
   }
 
+  // Thêm kiểm tra này để tránh lỗi khi form chưa được khởi tạo
+  if (!form) return null;
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="token"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  disabled
-                  type="hidden"
-                  placeholder={token || ""}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage className="text-red-600" />
-            </FormItem>
-          )}
-        />
+        {/* Ẩn trường token thay vì disable */}
+        <input type="hidden" {...form.register("token")} />
+
         <FormField
           control={form.control}
           name="email"
@@ -114,12 +103,13 @@ const ResetPassword = () => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input disabled placeholder={email || ""} {...field} />
+                <Input readOnly {...field} />
               </FormControl>
               <FormMessage className="text-red-600" />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -148,13 +138,14 @@ const ResetPassword = () => {
             </FormItem>
           )}
         />
+        {/* Thêm loading state vào button */}
         <Button
           className="w-full hover:bg-green-600 border-green-600"
           type="submit"
           variant={"outline"}
           disabled={loading}
         >
-          {loading ? "Resetting..." : "Reset password"}
+          {loading ? <LoadingCircle /> : "Reset password"}
         </Button>
         {error && <div className="text-red-600 mt-4">{error}</div>}
         <Button asChild>

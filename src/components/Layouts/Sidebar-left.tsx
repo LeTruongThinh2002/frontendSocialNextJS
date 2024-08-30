@@ -90,7 +90,7 @@ const SidebarLeft = ({ ...props }) => {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/profile" legacyBehavior passHref>
+                <Link href="/profile/1" legacyBehavior passHref>
                   <NavigationMenuLink>
                     <Avatar className="p-0.5 cursor-pointer bg-gradient-to-tr from-yellow-300 via-rose-500 to-indigo-500 to-90%">
                       <AvatarImage

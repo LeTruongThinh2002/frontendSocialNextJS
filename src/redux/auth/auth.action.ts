@@ -112,7 +112,7 @@ export const fetchUserProfileAction = createAsyncThunk<
 
     if (accessToken) {
       try {
-        const response = await fetch("http://spider.jp/api/auth/profile", {
+        const response = await fetch("http://spider.jp/api/auth/fetchProfile", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,

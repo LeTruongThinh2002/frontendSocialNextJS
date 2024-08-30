@@ -1,5 +1,7 @@
+import PostsLoading from "@/app/profile/[id]/@posts/loading";
+import ReelsLoading from "@/app/profile/[id]/@reels/loading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, Suspense } from "react";
 import { GiSpiderWeb } from "react-icons/gi";
 import { PiFilmReelThin } from "react-icons/pi";
 
@@ -23,8 +25,12 @@ const ProfileTab: FC<Props> = ({ posts, reels }) => {
           <PiFilmReelThin /> <span>Reel</span>
         </TabsTrigger>
       </TabsList>
-      <TabsContent value="posts">{posts}</TabsContent>
-      <TabsContent value="reels">{reels}</TabsContent>
+      <TabsContent value="posts">
+        <Suspense fallback={<PostsLoading />}>{posts}</Suspense>
+      </TabsContent>
+      <TabsContent value="reels">
+        <Suspense fallback={<ReelsLoading />}>{reels}</Suspense>
+      </TabsContent>
     </Tabs>
   );
 };

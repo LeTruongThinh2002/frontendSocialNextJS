@@ -24,7 +24,7 @@ import { AppDispatch, RootState } from "@/redux/store";
 import forgotPasswordSchema from "@/schema/forgotPasswordSchema";
 
 const ForgotPassword = () => {
-  const route = useRouter();
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
@@ -39,33 +39,19 @@ const ForgotPassword = () => {
   const onSubmit = async (data: z.infer<typeof forgotPasswordSchema>) => {
     try {
       const resultAction = await dispatch(forgotPasswordAction(data));
-      const result = forgotPasswordAction.fulfilled.match(resultAction);
-      if (result) {
-        toast.success("Notification", {
+      if (forgotPasswordAction.fulfilled.match(resultAction)) {
+        toast.success("Reset link sent", {
           description: "Please check your email for the reset link.",
-          action: {
-            label: "Hide",
-            onClick: () => {},
-          },
         });
-        route.push("/login");
+        router.push("/login");
       } else {
-        toast.error("Notification", {
-          description: "Send email reset password failed",
-          action: {
-            label: "Hide",
-            onClick: () => {},
-          },
+        toast.error("Failed to send reset link", {
+          description: resultAction.payload as string,
         });
       }
-    } catch (error: any) {
-      toast.error("Send email reset password error!", {
-        description: error.message,
-        action: {
-          label: "Hide",
-          onClick: () => {},
-        },
-      });
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      toast.error("An unexpected error occurred");
     }
   };
 
@@ -82,7 +68,7 @@ const ForgotPassword = () => {
                 <Input placeholder="yourname@example.com" {...field} />
               </FormControl>
               <FormDescription>
-                Please enter your email address.
+                Enter the email address associated with your account.
               </FormDescription>
               <FormMessage className="text-red-600" />
             </FormItem>
@@ -91,29 +77,21 @@ const ForgotPassword = () => {
         <Button
           className="w-full hover:bg-green-600 border-green-600"
           type="submit"
-          variant={"outline"}
+          variant="outline"
           disabled={loading}
         >
-          {loading ? "Sending..." : "Send verify email!"}
+          {loading ? "Sending..." : "Send reset link"}
         </Button>
-        {error && <div className="text-red-600 mt-4">{error}</div>}
-        <Button asChild>
-          <Link
-            className="text-sky-500 hover:underline hover:text-sky-600"
-            href={"/register"}
-          >
-            Register?
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link
-            className="text-sky-500 hover:underline hover:text-sky-600"
-            href={"/login"}
-          >
-            Login?
-          </Link>
-        </Button>
+        <div className="flex justify-between">
+          <Button variant="link" asChild>
+            <Link href="/register">Register</Link>
+          </Button>
+          <Button variant="link" asChild>
+            <Link href="/login">Back to login</Link>
+          </Button>
+        </div>
       </form>
+      {error && <div className="text-red-600 mt-4">{error}</div>}
     </Form>
   );
 };
