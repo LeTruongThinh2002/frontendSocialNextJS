@@ -23,11 +23,10 @@ import { AppDispatch, RootState } from "@/redux/store";
 import loginSchema from "@/schema/loginSchema";
 
 const Login = () => {
-  const route = useRouter();
+  const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
-  // Use the form hook with the defined schema
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -37,21 +36,19 @@ const Login = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
-    // Dispatch the login action and handle the result
-    const resultAction = await dispatch(loginUserAction(data));
-
-    if (loginUserAction.rejected.match(resultAction)) {
-      // If login fails, show error message
-      toast.error("Login error!", {
-        description: resultAction.payload as string,
-        action: {
-          label: "Hide",
-          onClick: () => {},
-        },
-      });
-    } else if (loginUserAction.fulfilled.match(resultAction)) {
-      // If login succeeds, redirect to the homepage or another route
-      route.push("/home"); // Adjust the route as needed
+    try {
+      const resultAction = await dispatch(loginUserAction(data));
+      if (loginUserAction.fulfilled.match(resultAction)) {
+        toast.success("Login successful!");
+        router.push("/home");
+      } else {
+        toast.error("Login failed", {
+          description: resultAction.payload as string,
+        });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("An unexpected error occurred");
     }
   };
 
@@ -91,27 +88,19 @@ const Login = () => {
         <Button
           className="w-full hover:bg-green-600 border-green-600"
           type="submit"
-          variant={"outline"}
+          variant="outline"
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
         </Button>
-        <Button asChild>
-          <Link
-            className="text-sky-500 hover:underline hover:text-sky-600"
-            href={"/register"}
-          >
-            Register?
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link
-            className="text-sky-500 hover:underline hover:text-sky-600"
-            href={"/forgot-password"}
-          >
-            Forgot password!
-          </Link>
-        </Button>
+        <div className="flex justify-between">
+          <Button variant="link" asChild>
+            <Link href="/register">Register</Link>
+          </Button>
+          <Button variant="link" asChild>
+            <Link href="/forgot-password">Forgot password?</Link>
+          </Button>
+        </div>
       </form>
       {error && <div className="text-red-600 mt-4">{error}</div>}
     </Form>

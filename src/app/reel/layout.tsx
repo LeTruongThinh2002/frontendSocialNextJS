@@ -1,5 +1,6 @@
 import LayoutHome from "@/components/Layouts/Layout-Home";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, Suspense } from "react";
+import ReelLoading from "./@reel/loading";
 
 type LayoutProps = {
   children: ReactNode;
@@ -9,7 +10,7 @@ type LayoutProps = {
 const Layout: FC<LayoutProps> = ({ children, reel }) => {
   return (
     <LayoutHome>
-      {reel}
+      <Suspense fallback={<ReelLoading />}>{reel}</Suspense>
       {children}
     </LayoutHome>
   );

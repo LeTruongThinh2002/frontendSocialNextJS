@@ -1,6 +1,7 @@
 "use client";
+import { Suspense } from "react";
 import FriendsList from "../ui/friends-list";
-import NotablePosts from "../ui/notable-posts";
+import NotablePosts, { NotablePostsSkeleton } from "../ui/notable-posts";
 import ProfileIntro from "../ui/profile-intro";
 import WebInfo from "../ui/web-info";
 
@@ -9,7 +10,9 @@ const SidebarProfileRight = ({ ...prop }) => {
     <div {...prop}>
       <div className="flex flex-col gap-2">
         <ProfileIntro />
-        <NotablePosts />
+        <Suspense fallback={<NotablePostsSkeleton />}>
+          <NotablePosts />
+        </Suspense>
         <FriendsList />
         <WebInfo />
       </div>

@@ -37,7 +37,7 @@
 }
 
 .edu-vic-wa-nt-beginner-700 {
-  font-family: "Edu VIC WA NT Beginner", cursive;
+  font-family: var(--font-edu-vic), cursive;
   font-optical-sizing: auto;
   font-weight: 700;
   font-style: normal;

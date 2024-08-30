@@ -1,13 +1,24 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Edu_VIC_WA_NT_Beginner as EduVIC } from "next/font/google";
+import { Grey_Qo as GreyQo } from "next/font/google";
 import "@/styles/globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import NextTopLoader from "nextjs-toploader";
-import { UserProvider } from "@/context/UserContext";
 
 const inter = Inter({ subsets: ["latin"] });
+const eduVIC = EduVIC({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-edu-vic",
+});
+const greyQo = GreyQo({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-grey-qo",
+});
 
 export const metadata: Metadata = {
   title: "Spider",
@@ -28,13 +39,10 @@ export default function RootLayout({
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
-
-        <link
-          href="https://fonts.googleapis.com/css2?family=Edu+VIC+WA+NT+Beginner:wght@400..700&family=Grey+Qo&display=swap"
-          rel="stylesheet"
-        />
       </head>
-      <body className={inter.className}>
+      <body
+        className={`${inter.className} ${eduVIC.variable} ${greyQo.variable}`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -46,9 +54,9 @@ export default function RootLayout({
               showSpinner={false}
               color="linear-gradient(to right, yellow, red, blue)"
             />
-            <UserProvider>
-              <main>{children}</main>
-            </UserProvider>
+            {/* <UserProvider> */}
+            <main>{children}</main>
+            {/* </UserProvider> */}
           </TooltipProvider>
           <Toaster richColors />
         </ThemeProvider>
