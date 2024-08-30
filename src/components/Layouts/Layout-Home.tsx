@@ -2,17 +2,20 @@
 import { FC, ReactNode } from "react";
 import SidebarLeft from "./Sidebar-left";
 import SidebarBottom from "./Sidebar-bottom";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import { redirect } from "next/navigation";
 
 type LayoutProps = {
   children: ReactNode;
 };
 
 const LayoutHome: FC<LayoutProps> = ({ children }) => {
-  // const user = useSelector((state: RootState) => state.auth.user);
+  const user = useSelector((state: RootState) => state.auth.user);
 
-  // if (!user) {
-  //   redirect("/login");
-  // }
+  if (!user) {
+    redirect("/login");
+  }
 
   return (
     <div className="h-screen w-screen max-h-screen grid lg:grid-cols-12 grid-rows-12">

@@ -39,13 +39,16 @@ export const loginUserAction = createAsyncThunk<
   try {
     // Validate the credentials using the schema
     loginSchema.parse(credentials);
-    const response = await fetch("http://spider.jp/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+    const response = await fetch(
+      "https://backend-social-laravel.vercel.app/api/api/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      }
+    );
 
     if (response.ok) {
       const data = await response.json();
@@ -73,13 +76,16 @@ export const registerUserAction = createAsyncThunk<
   try {
     // Validate the credentials using the schema
     registerSchema.parse(credentials);
-    const response = await fetch("http://spider.jp/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+    const response = await fetch(
+      "https://backend-social-laravel.vercel.app/api/api/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      }
+    );
 
     if (response.ok) {
       const data = await response.json();
@@ -112,12 +118,15 @@ export const fetchUserProfileAction = createAsyncThunk<
 
     if (accessToken) {
       try {
-        const response = await fetch("http://spider.jp/api/auth/fetchProfile", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const response = await fetch(
+          "https://backend-social-laravel.vercel.app/api/api/auth/fetchProfile",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
         if (response.ok) {
           const userData: ProfileResponse = await response.json();
@@ -127,7 +136,7 @@ export const fetchUserProfileAction = createAsyncThunk<
 
           if (refreshToken) {
             const refreshResponse = await fetch(
-              "http://spider.jp/api/auth/refresh",
+              "https://backend-social-laravel.vercel.app/api/api/auth/refresh",
               {
                 method: "POST",
                 headers: {
@@ -145,7 +154,7 @@ export const fetchUserProfileAction = createAsyncThunk<
 
               // Retry fetching user data after refreshing token
               const retryResponse = await fetch(
-                "http://spider.jp/api/auth/profile",
+                "https://backend-social-laravel.vercel.app/api/api/auth/profile",
                 {
                   method: "GET",
                   headers: {
@@ -186,7 +195,7 @@ export const fetchUserProfileAction = createAsyncThunk<
 
       if (refreshToken) {
         const refreshResponse = await fetch(
-          "http://spider.jp/api/auth/refresh",
+          "https://backend-social-laravel.vercel.app/api/api/auth/refresh",
           {
             method: "POST",
             headers: {
@@ -204,7 +213,7 @@ export const fetchUserProfileAction = createAsyncThunk<
 
           // Retry fetching user data after refreshing token
           const retryResponse = await fetch(
-            "http://spider.jp/api/auth/profile",
+            "https://backend-social-laravel.vercel.app/api/api/auth/profile",
             {
               method: "GET",
               headers: {
@@ -244,13 +253,16 @@ export const forgotPasswordAction = createAsyncThunk<
   try {
     // Validate the credentials using the schema
     forgotPasswordSchema.parse(credentials);
-    const response = await fetch("http://spider.jp/api/auth/forgotPassword", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+    const response = await fetch(
+      "https://backend-social-laravel.vercel.app/api/api/auth/forgotPassword",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      }
+    );
 
     if (response.ok) {
       return {
@@ -280,13 +292,16 @@ export const resetPasswordAction = createAsyncThunk<
   try {
     // Validate the credentials using the schema
     resetPasswordSchema.parse(credentials);
-    const response = await fetch("http://spider.jp/api/auth/resetPassword", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
-    });
+    const response = await fetch(
+      "https://backend-social-laravel.vercel.app/api/api/auth/resetPassword",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(credentials),
+      }
+    );
 
     if (response.ok) {
       return {
@@ -320,7 +335,7 @@ export const verifyEmailAction = createAsyncThunk(
   ) => {
     try {
       const response = await fetch(
-        `http://spider.jp/api/auth/email/verify/${id}/${token}`,
+        `https://backend-social-laravel.vercel.app/api/api/auth/email/verify/${id}/${token}`,
         {
           method: "POST",
           headers: {
