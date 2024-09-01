@@ -16,7 +16,7 @@ const Reels = async () => {
   return (
     <div className="grid grid-cols-4 gap-1">
       {newsItems.map((_, index) => (
-        <>
+        <div key={index}>
           <AspectRatio
             ratio={1 / 1.5}
             className="bg-muted max-h-[30em] cursor-pointer relative aspect-ratio"
@@ -65,7 +65,7 @@ const Reels = async () => {
               </div>
             </div>
           </AspectRatio>
-        </>
+        </div>
       ))}
     </div>
   );

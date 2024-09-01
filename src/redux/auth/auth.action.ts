@@ -6,6 +6,7 @@ import resetPasswordSchema from "@/schema/resetPasswordSchema";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { z } from "zod";
+import { persistor } from "../store"; // Import persistor from your store file
 // Define types for the expected response of each thunk
 interface LoginResponse {
   access_token: string;
@@ -322,6 +323,7 @@ export const resetPasswordAction = createAsyncThunk<
   }
 });
 
+// Thunk for verify email
 export const verifyEmailAction = createAsyncThunk(
   "auth/verifyEmail",
   async (
@@ -356,8 +358,19 @@ export const verifyEmailAction = createAsyncThunk(
 );
 
 // Thunk for logout
-export const logoutAction = createAsyncThunk("auth/logout", async () => {
-  Cookies.remove("access_token");
-  Cookies.remove("refresh_token");
-  return null;
-});
+export const logoutAction = createAsyncThunk(
+  "auth/logout",
+  async (_, { dispatch }) => {
+    // Remove cookies
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
+
+    // Clear persisted state
+    await persistor.purge();
+
+    // Reset the entire Redux store (optional, depending on your needs)
+    // dispatch({ type: 'RESET_STORE' });
+
+    return null;
+  }
+);

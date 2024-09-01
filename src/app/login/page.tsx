@@ -102,7 +102,9 @@ const Login = () => {
           </Button>
         </div>
       </form>
-      {error && <div className="text-red-600 mt-4">{error}</div>}
+      {error && error !== "No refresh token found. Please log in again." && (
+        <div className="text-red-600 mt-4">{error}</div>
+      )}
     </Form>
   );
 };
