@@ -46,6 +46,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     fetchUserProfile();
 
+    // Fetch user profile every 5 minutes
     const interval = setInterval(() => {
       fetchUserProfile();
     }, 5 * 60 * 1000); // 5 minutes

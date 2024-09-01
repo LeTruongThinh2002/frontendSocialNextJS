@@ -1,15 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-  loginUserAction,
-  registerUserAction,
-  fetchUserProfileAction,
-  forgotPasswordAction,
-  resetPasswordAction,
-  logoutAction,
-  verifyEmailAction,
-} from "./auth.action";
+import { persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
-interface Types {
+export interface AuthTypes {
   error: any;
   loading: boolean;
   user: any;
@@ -18,7 +11,7 @@ interface Types {
   suggestUsers: any;
 }
 
-const initialState: Types = {
+const initialState: AuthTypes = {
   error: null,
   loading: false,
   user: null,
@@ -34,100 +27,120 @@ const authSlice = createSlice({
     // Các actions khác...
   },
   extraReducers: (builder) => {
-    // login
-    builder
-      .addCase(loginUserAction.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUserAction.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(loginUserAction.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
-
-    // register
-    builder
-      .addCase(registerUserAction.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(registerUserAction.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(registerUserAction.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
-
-    // fetch user profile
-    builder
-      .addCase(fetchUserProfileAction.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchUserProfileAction.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(fetchUserProfileAction.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
-
-    // forgot password
-    builder
-      .addCase(forgotPasswordAction.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(forgotPasswordAction.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(forgotPasswordAction.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
-
-    // reset password
-    builder
-      .addCase(resetPasswordAction.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(resetPasswordAction.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(resetPasswordAction.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
-
-    //verify
-    builder
-      .addCase(verifyEmailAction.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(verifyEmailAction.fulfilled, (state) => {
-        state.loading = false;
-        state.error = null;
-      })
-      .addCase(verifyEmailAction.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
-
-    // logout
-    builder.addCase(logoutAction.fulfilled, (state) => {
-      state.user = null;
-      state.error = null;
-    });
+    // Move the extraReducers logic to a separate function
+    addAuthCases(builder);
   },
 });
 
-export const authReducer = authSlice.reducer;
+// Define a function to add the extra reducers
+export function addAuthCases(builder: any) {
+  // login
+  builder
+    .addCase("auth/login/pending", (state: any) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase("auth/login/fulfilled", (state: any, action: any) => {
+      state.loading = false;
+      state.user = action.payload;
+    })
+    .addCase("auth/login/rejected", (state: any, action: any) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+
+  // register
+  builder
+    .addCase("auth/register/pending", (state: any) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase("auth/register/fulfilled", (state: any, action: any) => {
+      state.loading = false;
+      state.user = action.payload;
+    })
+    .addCase("auth/register/rejected", (state: any, action: any) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+
+  // fetch user profile
+  builder
+    .addCase("auth/fetchUserProfile/pending", (state: any) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase("auth/fetchUserProfile/fulfilled", (state: any, action: any) => {
+      state.loading = false;
+      state.user = action.payload;
+      state.error = null;
+    })
+    .addCase("auth/fetchUserProfile/rejected", (state: any, action: any) => {
+      state.loading = false;
+      state.error = action.payload as string;
+      state.user = null; // Clear user data on rejection
+    });
+
+  // forgot password
+  builder
+    .addCase("auth/forgotPassword/pending", (state: any) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase("auth/forgotPassword/fulfilled", (state: any) => {
+      state.loading = false;
+    })
+    .addCase("auth/forgotPassword/rejected", (state: any, action: any) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+
+  // reset password
+  builder
+    .addCase("auth/resetPassword/pending", (state: any) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase("auth/resetPassword/fulfilled", (state: any) => {
+      state.loading = false;
+    })
+    .addCase("auth/resetPassword/rejected", (state: any, action: any) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+
+  // verify email
+  builder
+    .addCase("auth/verifyEmail/pending", (state: any) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase("auth/verifyEmail/fulfilled", (state: any) => {
+      state.loading = false;
+      state.error = null;
+    })
+    .addCase("auth/verifyEmail/rejected", (state: any, action: any) => {
+      state.loading = false;
+      state.error = action.payload as string;
+    });
+
+  // logout
+  builder.addCase("auth/logout/fulfilled", (state: any) => {
+    state.user = null;
+    state.error = null;
+  });
+
+  // Add case for clearUserData
+  builder.addCase("auth/clearUserData/fulfilled", (state: any) => {
+    state.user = null;
+    state.error = null;
+  });
+}
+
+const persistConfig = {
+  key: "auth",
+  storage,
+  whitelist: ["user"], // Chỉ lưu trữ trạng thái 'user'
+};
+
+export const authReducer = persistReducer(persistConfig, authSlice.reducer);

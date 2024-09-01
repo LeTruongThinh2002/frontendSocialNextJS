@@ -1,4 +1,4 @@
-import LayoutAuthentication from "@/components/Layouts/Layout-Authentication";
+import LayoutHome from "@/components/Layouts/Layout-Home";
 import { FC, ReactNode } from "react";
 
 type LayoutProps = {
@@ -6,7 +6,7 @@ type LayoutProps = {
 };
 
 const Layout: FC<LayoutProps> = ({ children }) => {
-  return <LayoutAuthentication>{children}</LayoutAuthentication>;
+  return <LayoutHome>{children}</LayoutHome>;
 };
 
 export default Layout;

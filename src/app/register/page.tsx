@@ -42,14 +42,18 @@ const Register = () => {
     },
   });
 
+  // Submit form
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     try {
+      // Dispatch register user action
       const resultAction = await dispatch(registerUserAction(data));
+
+      // Check if the action is fulfilled
       if (registerUserAction.fulfilled.match(resultAction)) {
         toast.success("Registration successful!", {
           description: "You can now log in to your account.",
         });
-        router.push("/login");
+        router.push("/home");
       } else {
         toast.error("Registration failed", {
           description: resultAction.error?.message || "Unknown error occurred",
@@ -188,7 +192,9 @@ const Register = () => {
           <Link href="/login">Already have an account? Log in</Link>
         </Button>
       </form>
-      {error && <div className="text-red-600 mt-4">{error}</div>}
+      {error && error !== "No refresh token found. Please log in again." && (
+        <div className="text-red-600 mt-4">{error}</div>
+      )}
     </Form>
   );
 };

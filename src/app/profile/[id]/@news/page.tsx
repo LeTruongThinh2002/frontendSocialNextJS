@@ -16,21 +16,19 @@ const News = async () => {
 
   const newsItems = await fetchNews();
   return (
-    <>
-      <div className="flex flex-row gap-5 w-full px-2">
-        <Carousel className="w-full max-h-[30em]">
-          <CarouselContent>
-            {newsItems.map((_, index) => (
-              <CarouselItem className="basis-[24%] md:basis-[18%]" key={index}>
-                <ProfileNew />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </div>
-    </>
+    <div className="flex flex-row gap-5 w-full px-2">
+      <Carousel className="w-full max-h-[30em]">
+        <CarouselContent>
+          {newsItems.map((_, index) => (
+            <CarouselItem className="basis-[24%] md:basis-[18%]" key={index}>
+              <ProfileNew />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    </div>
   );
 };
 
