@@ -113,7 +113,11 @@ const Comment = ({
           </Button>
         )}
       </div>
-      <TruncatedText text={`${comment.comment}`} maxWidth={"100%"} />
+      <TruncatedText
+        text={`${comment.comment}`}
+        maxWidth={"100%"}
+        textSize={"text-sm"}
+      />
       <div className="flex flex-col gap-2">
         <div className="flex flex-row gap-2 text-gray-400 text-sm ">
           <SearchUserFromData type="friend" data={comment.like}>
