@@ -33,7 +33,11 @@ const DescriptionPost = ({ post }: { post: any }) => {
           </span>
         </div>
       </div>
-      <TruncatedText text={`${post.description}`} maxWidth={"100%"} />
+      <TruncatedText
+        text={`${post.description}`}
+        maxWidth={"100%"}
+        textSize={"text-sm"}
+      />
     </div>
   );
 };
