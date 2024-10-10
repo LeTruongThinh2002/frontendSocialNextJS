@@ -1,21 +1,23 @@
-import Image from "next/image";
-import { AspectRatio } from "./aspect-ratio";
+import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 
-const Friend = () => {
+const Friend = ({ friend }: any) => {
   return (
-    <div className="flex flex-col gap-1">
-      <AspectRatio ratio={1 / 1} className="bg-muted max-h-[30em]">
-        <Image
-          src="https://images.pexels.com/photos/27354543/pexels-photo-27354543/free-photo-of-thanh-ph-d-ng-ph-toa-nha-ki-n-truc-s.jpeg"
-          alt="Photo by Drew Beamer"
-          fill
-          className="rounded-md object-cover"
+    <Link href={`/profile/${friend.id}`} className="flex flex-col gap-1">
+      <Avatar className="rounded-none cursor-pointer h-[5em] w-[5em]">
+        <AvatarImage
+          src={friend.avatar}
+          alt={friend.first_name + " " + friend.last_name}
         />
-      </AspectRatio>
+        <AvatarFallback>
+          {friend.first_name.charAt(0)}
+          {friend.last_name.charAt(0)}
+        </AvatarFallback>
+      </Avatar>
       <span className="text-sm font-semibold hover:underline cursor-pointer truncate ...">
-        admin text friend
+        {friend.first_name + " " + friend.last_name}
       </span>
-    </div>
+    </Link>
   );
 };
 

@@ -14,9 +14,12 @@ import { TiMessages } from "react-icons/ti";
 import { BiSearchAlt } from "react-icons/bi";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
 const SidebarLeft = ({ ...props }) => {
   const path = usePathname();
+  const { user } = useSelector((state: RootState) => state.auth);
 
   return (
     <div {...props}>
@@ -90,15 +93,18 @@ const SidebarLeft = ({ ...props }) => {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/profile/1" legacyBehavior passHref>
+                <Link href={`/profile/${user?.id}`} legacyBehavior passHref>
                   <NavigationMenuLink>
                     <Avatar className="p-0.5 cursor-pointer bg-gradient-to-tr from-yellow-300 via-rose-500 to-indigo-500 to-90%">
                       <AvatarImage
                         className="rounded-full border-2 border-black "
-                        src="https://github.com/shadcn.png"
-                        alt="@shadcn"
+                        src={user?.avatar || "https://github.com/shadcn.png"}
+                        alt={user?.name || "User"}
                       />
-                      <AvatarFallback>CN</AvatarFallback>
+                      <AvatarFallback>
+                        {user?.first_name?.charAt(0) +
+                          user?.last_name?.charAt(0) || "U"}
+                      </AvatarFallback>
                     </Avatar>
                   </NavigationMenuLink>
                 </Link>
