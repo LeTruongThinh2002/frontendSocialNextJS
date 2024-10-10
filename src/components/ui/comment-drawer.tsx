@@ -27,7 +27,7 @@ const CommentDrawer = ({ children }: any) => {
         <div className="md:w-1/2 lg:w-1/3 flex flex-col gap-1 w-full bg-black border-l border-r rounded-b-none border-slate-500 rounded-lg h-full">
           <div className="h-full w-full flex flex-col gap-2 overflow-y-auto p-2">
             {Array.from({ length: 5 }).map((_, index) => (
-              <Comment key={index} />
+              <Comment key={index} comment={"chao chao"} type={"comment"} />
             ))}
           </div>
           <div className="p-2 flex flex-row items-center gap-2 border-t border-slate-500">
