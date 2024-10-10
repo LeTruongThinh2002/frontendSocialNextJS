@@ -115,7 +115,6 @@ const Reel = () => {
           pellentesque.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel
           turpis vel neque ultrices placerat. Nullam non enim vel velit semper
           pellentesque.`}
-          textSize="text-sm"
         />
       </div>
     </div>
