@@ -47,7 +47,11 @@ const Post = () => {
         </Button>
       </CardHeader>
       <CardContent>
-        <ImageList />
+        <ImageList
+          images={[
+            "https://images.pexels.com/photos/14590086/pexels-photo-14590086.jpeg",
+          ]}
+        />
       </CardContent>
       <CardContent className="flex flex-row gap-4">
         <GoHeart size={"1.5em"} />
@@ -67,6 +71,7 @@ const Post = () => {
           text={`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel
           turpis vel neque ultrices placerat. Nullam non enim vel velit semper
           pellentesque.`}
+          textSize={"text-sm"}
         />
         <div className="pt-1 text-sm text-gray-400 font-semibold hover:underline cursor-pointer">
           See 188 comments

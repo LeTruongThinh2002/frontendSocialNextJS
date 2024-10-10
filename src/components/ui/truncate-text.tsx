@@ -2,12 +2,14 @@ import { useState, useRef, useEffect } from "react";
 
 interface TruncatedTextProps {
   text: string;
+  textSize: string;
   maxWidth?: string | number; // Chiều rộng tối đa của phần tử
 }
 
 const TruncatedText: React.FC<TruncatedTextProps> = ({
   text,
   maxWidth = "100%",
+  textSize = "text-sm",
 }) => {
   const [isTruncated, setIsTruncated] = useState(false);
   const [showFullText, setShowFullText] = useState(false);
@@ -43,23 +45,24 @@ const TruncatedText: React.FC<TruncatedTextProps> = ({
   }, [text]);
 
   return (
-    <div style={{ maxWidth }}>
+    <div className={`max-w-[${maxWidth}]`}>
       <p
         ref={textRef}
-        style={{
-          whiteSpace: showFullText ? "normal" : "nowrap",
-          overflowY: "auto",
-          overflowX: "hidden",
-          maxHeight: "10em",
-          textOverflow: "ellipsis",
-        }}
-        className="text-sm font-light"
+        className={
+          textSize +
+          ` font-light whitespace-${
+            showFullText ? "normal" : "nowrap truncate"
+          } overflow-y-auto overflow-x-hidden max-h-20 `
+        }
       >
         {text}
       </p>
       {isTruncated && (
         <button
-          className="text-sm font-light cursor-pointer text-gray-400 hover:underline"
+          className={
+            textSize +
+            ` font-light cursor-pointer text-gray-400 hover:underline`
+          }
           onClick={() => setShowFullText(!showFullText)}
         >
           {showFullText ? "See less" : "See more..."}
