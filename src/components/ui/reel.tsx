@@ -107,6 +107,7 @@ const Reel = () => {
         <CardUserPost />
         <TruncatedText
           maxWidth={"15em"}
+          textSize={"text-sm"}
           text={`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel
           turpis vel neque ultrices placerat. Nullam non enim vel velit semper
           pellentesque.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel
@@ -114,6 +115,7 @@ const Reel = () => {
           pellentesque.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel
           turpis vel neque ultrices placerat. Nullam non enim vel velit semper
           pellentesque.`}
+          textSize="text-sm"
         />
       </div>
     </div>

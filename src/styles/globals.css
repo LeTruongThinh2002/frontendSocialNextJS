@@ -11,6 +11,10 @@
   animation: spin-loading 1s ease infinite;
 }
 
+.spinner {
+  animation: spin-loading 1s ease infinite;
+}
+
 .gradient-text {
   background-clip: text;
   -webkit-background-clip: text;
