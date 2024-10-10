@@ -24,12 +24,17 @@ interface ProfileResponse {
   id: number;
   first_name: string;
   last_name: string;
+  avatar: string;
+  background: string;
   email: string;
+  email_verified_at: Date;
   country: string;
   updated_at: Date;
   created_at: Date;
   // Add any other fields that the profile API returns
 }
+
+// New interfaces for the new actions
 
 // Thunk for login
 export const loginUserAction = createAsyncThunk<
@@ -90,8 +95,19 @@ export const registerUserAction = createAsyncThunk<
 
     if (response.ok) {
       const data = await response.json();
-      Cookies.set("access_token", data.access_token, { expires: 1 / 24 });
-      Cookies.set("refresh_token", data.refresh_token, { expires: 30 });
+      const accessTokenExpiry = new Date(
+        new Date().getTime() + 1 * 60 * 60 * 1000
+      ); // 1 hour
+      const refreshTokenExpiry = new Date(
+        new Date().getTime() + 30 * 24 * 60 * 60 * 1000
+      ); // 30 days
+
+      Cookies.set("access_token", data.access_token, {
+        expires: accessTokenExpiry,
+      });
+      Cookies.set("refresh_token", data.refresh_token, {
+        expires: refreshTokenExpiry,
+      });
       return data;
     } else {
       const errorData = await response.json();
@@ -149,8 +165,12 @@ export const fetchUserProfileAction = createAsyncThunk<
 
             if (refreshResponse.ok) {
               const refreshData = await refreshResponse.json();
+              const accessTokenExpiry = new Date(
+                new Date().getTime() + 1 * 60 * 60 * 1000
+              ); // 1 hour
+
               Cookies.set("access_token", refreshData.access_token, {
-                expires: 1 / 24,
+                expires: accessTokenExpiry,
               });
 
               // Retry fetching user data after refreshing token
@@ -208,8 +228,12 @@ export const fetchUserProfileAction = createAsyncThunk<
 
         if (refreshResponse.ok) {
           const refreshData = await refreshResponse.json();
+          const accessTokenExpiry = new Date(
+            new Date().getTime() + 1 * 60 * 60 * 1000
+          ); // 1 hour
+
           Cookies.set("access_token", refreshData.access_token, {
-            expires: 1 / 24,
+            expires: accessTokenExpiry,
           });
 
           // Retry fetching user data after refreshing token
@@ -245,17 +269,17 @@ export const fetchUserProfileAction = createAsyncThunk<
   }
 );
 
-// Thunk for forgot password
-export const forgotPasswordAction = createAsyncThunk<
-  any, // Success type
-  z.infer<typeof forgotPasswordSchema>, // Input type
-  { rejectValue: string } // Rejected value type
->("auth/forgotPassword", async (credentials, { rejectWithValue }) => {
+const handlePasswordAction = async (
+  actionType: "forgotPassword" | "resetPassword",
+  credentials:
+    | z.infer<typeof forgotPasswordSchema>
+    | z.infer<typeof resetPasswordSchema>,
+  schema: typeof forgotPasswordSchema | typeof resetPasswordSchema
+) => {
   try {
-    // Validate the credentials using the schema
-    forgotPasswordSchema.parse(credentials);
+    schema.parse(credentials);
     const response = await fetch(
-      "https://backend-social-laravel.vercel.app/api/api/auth/forgotPassword",
+      `https://backend-social-laravel.vercel.app/api/api/auth/${actionType}`,
       {
         method: "POST",
         headers: {
@@ -268,57 +292,56 @@ export const forgotPasswordAction = createAsyncThunk<
     if (response.ok) {
       return {
         success: true,
-        message: "Send email reset successfully!",
+        message: `${
+          actionType === "forgotPassword"
+            ? "Send email reset"
+            : "Reset password"
+        } successfully!`,
       };
     } else {
       const errorData = await response.json();
-      return rejectWithValue(errorData.error || "An unknown error occurred");
+      throw new Error(errorData.error || "An unknown error occurred");
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return rejectWithValue(error.errors[0].message);
+      throw new Error(error.errors[0].message);
     }
+    throw new Error(`An error occurred during the ${actionType} process.`);
+  }
+};
+
+export const forgotPasswordAction = createAsyncThunk<
+  any,
+  z.infer<typeof forgotPasswordSchema>,
+  { rejectValue: string }
+>("auth/forgotPassword", async (credentials, { rejectWithValue }) => {
+  try {
+    return await handlePasswordAction(
+      "forgotPassword",
+      credentials,
+      forgotPasswordSchema
+    );
+  } catch (error) {
     return rejectWithValue(
-      "An error occurred during the forgot password process."
+      error instanceof Error ? error.message : "An unknown error occurred"
     );
   }
 });
 
-// Thunk for reset password
 export const resetPasswordAction = createAsyncThunk<
-  any, // Success type
-  z.infer<typeof resetPasswordSchema>, // Input type
-  { rejectValue: string } // Rejected value type
+  any,
+  z.infer<typeof resetPasswordSchema>,
+  { rejectValue: string }
 >("auth/resetPassword", async (credentials, { rejectWithValue }) => {
   try {
-    // Validate the credentials using the schema
-    resetPasswordSchema.parse(credentials);
-    const response = await fetch(
-      "https://backend-social-laravel.vercel.app/api/api/auth/resetPassword",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      }
+    return await handlePasswordAction(
+      "resetPassword",
+      credentials,
+      resetPasswordSchema
     );
-
-    if (response.ok) {
-      return {
-        success: true,
-        message: "Reset password successfully!",
-      };
-    } else {
-      const errorData = await response.json();
-      return rejectWithValue(errorData.error || "An unknown error occurred");
-    }
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return rejectWithValue(error.errors[0].message);
-    }
     return rejectWithValue(
-      "An error occurred during the reset password process."
+      error instanceof Error ? error.message : "An unknown error occurred"
     );
   }
 });
@@ -374,3 +397,43 @@ export const logoutAction = createAsyncThunk(
     return null;
   }
 );
+
+const apiRequest = async (url: string, method: string, accessToken: string) => {
+  const response = await fetch(url, {
+    method,
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (response.ok) {
+    return await response.json();
+  } else {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "An unknown error occurred");
+  }
+};
+
+export const destroyAccountAction = createAsyncThunk<
+  any,
+  { userId: number },
+  { rejectValue: string }
+>("user/destroyAccount", async ({ userId }, { rejectWithValue }) => {
+  try {
+    const accessToken = Cookies.get("access_token");
+    if (!accessToken)
+      return rejectWithValue("No access token found. Please log in again.");
+
+    return await apiRequest(
+      `https://backend-social-laravel.vercel.app/api/api/users/${userId}`,
+      "DELETE",
+      accessToken
+    );
+  } catch (error) {
+    return rejectWithValue(
+      error instanceof Error
+        ? error.message
+        : "An error occurred while destroying the account."
+    );
+  }
+});

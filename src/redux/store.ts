@@ -1,36 +1,33 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { persistStore, persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import { addAuthCases, AuthTypes } from "./auth/auth.reducer";
-import { createSlice } from "@reduxjs/toolkit";
-
-// Create a temporary slice to hold the auth reducer
-const tempAuthSlice = createSlice({
-  name: "auth",
-  initialState: {},
-  reducers: {},
-  extraReducers: (builder) => {
-    addAuthCases(builder);
-  },
-});
-
-// Cấu hình persist
-const persistConfig = {
-  key: "root",
-  storage,
-};
-
-// Tạo persisted reducer
-const persistedReducer = persistReducer(persistConfig, tempAuthSlice.reducer);
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  persistStore,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist";
+import { authReducer, AuthTypes } from "./auth/auth.reducer";
+import postReducer from "./post/post.reducer";
+import newsReducer from "./news/news.reducer";
+import reelReducer from "./reel/reel.reducer";
+import { userReducer } from "./user/user.reducer";
 
 // Tạo store
 const store = configureStore({
   reducer: {
-    auth: persistedReducer,
+    auth: authReducer,
+    post: postReducer,
+    news: newsReducer,
+    reel: reelReducer,
+    user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false,
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
     }),
 });
 
@@ -40,6 +37,10 @@ export const persistor = persistStore(store);
 // Định nghĩa RootState
 export interface RootState {
   auth: AuthTypes;
+  post: ReturnType<typeof postReducer>;
+  news: ReturnType<typeof newsReducer>;
+  reel: ReturnType<typeof reelReducer>;
+  user: ReturnType<typeof userReducer>;
 }
 
 // Định nghĩa AppDispatch

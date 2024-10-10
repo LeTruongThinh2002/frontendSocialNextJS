@@ -49,7 +49,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     // Fetch user profile every 5 minutes
     const interval = setInterval(() => {
       fetchUserProfile();
-    }, 5 * 60 * 1000); // 5 minutes
+    }, 40 * 60 * 1000); // 40 minutes
 
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, []);
