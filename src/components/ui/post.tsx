@@ -52,11 +52,6 @@ const Post = () => {
             "https://images.pexels.com/photos/14590086/pexels-photo-14590086.jpeg",
           ]}
         />
-        <ImageList
-          images={[
-            "https://images.pexels.com/photos/14590086/pexels-photo-14590086.jpeg",
-          ]}
-        />
       </CardContent>
       <CardContent className="flex flex-row gap-4">
         <GoHeart size={"1.5em"} />
