@@ -1,5 +1,5 @@
 "use client";
-import * as React from "react";
+
 import {
   Carousel,
   CarouselContent,
@@ -18,35 +18,44 @@ import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import TruncatedText from "./truncate-text";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  SyntheticEvent,
+} from "react";
 
 const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
-  const [api, setApi] = React.useState<any>();
-  const [current, setCurrent] = React.useState(currentUser || 0);
-  const [innerCurrent, setInnerCurrent] = React.useState(innerCurrentNews || 0);
-  const [progress, setProgress] = React.useState(0);
-  const [shouldResetProgress, setShouldResetProgress] = React.useState(false);
-  const videoRef = React.useRef<HTMLVideoElement>(null);
-  const [videoDuration, setVideoDuration] = React.useState(0);
-  const [isPlaying, setIsPlaying] = React.useState(true);
-  const [isMuted, setIsMuted] = React.useState(true);
+  const [api, setApi] = useState<any>();
+  const [current, setCurrent] = useState(currentUser);
+  const [innerCurrent, setInnerCurrent] = useState(innerCurrentNews);
+  const [progress, setProgress] = useState(0);
+  const [shouldResetProgress, setShouldResetProgress] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
 
   const isLastSlide = current === apiData.length - 1;
-  const isLastInnerSlide = innerCurrent === apiData[current].news.length - 1;
+  const isLastInnerSlide = innerCurrent === apiData[current]?.news?.length - 1;
   const isLastItem = isLastSlide && isLastInnerSlide;
-  const isCurrentItemVideo =
-    apiData[current].news[innerCurrent].media.endsWith(".mp4");
+  const currentNews = apiData[current]?.news?.[innerCurrent];
+  const isCurrentItemVideo = currentNews?.media?.endsWith(".mp4");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!api) return;
+
+    api.scrollTo(currentUser);
 
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap());
       setInnerCurrent(0);
       setProgress(0);
     });
-  }, [api]);
+  }, [api, currentUser]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isPlaying) return;
 
     const timer = setInterval(() => {
@@ -62,7 +71,7 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
         if (newProgress >= 100) {
           if (isLastItem) {
             return 100;
-          } else if (innerCurrent < apiData[current].news.length - 1) {
+          } else if (innerCurrent < apiData[current]?.news?.length - 1) {
             setInnerCurrent(innerCurrent + 1);
           } else if (current < apiData.length - 1) {
             api?.scrollNext();
@@ -86,10 +95,9 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
     apiData,
   ]);
 
-  React.useEffect(() => {
-    const currentItem = apiData[current].news[innerCurrent];
+  useEffect(() => {
     const currentVideoRef = videoRef.current;
-    if (currentItem.media.endsWith(".mp4") && currentVideoRef) {
+    if (isCurrentItemVideo && currentVideoRef) {
       if (isPlaying) {
         currentVideoRef.play();
       } else {
@@ -103,11 +111,11 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
         currentVideoRef.pause();
       }
     };
-  }, [current, innerCurrent, isPlaying, isMuted, apiData]);
+  }, [current, innerCurrent, isPlaying, isMuted, isCurrentItemVideo]);
 
-  const handleNext = React.useCallback(() => {
+  const handleNext = useCallback(() => {
     setShouldResetProgress(true);
-    if (innerCurrent < apiData[current].news.length - 1) {
+    if (innerCurrent < apiData[current]?.news?.length - 1) {
       setInnerCurrent(innerCurrent + 1);
     } else if (current < apiData.length - 1) {
       api?.scrollNext();
@@ -118,21 +126,21 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
     }
   }, [api, current, innerCurrent, apiData]);
 
-  const handlePrevious = React.useCallback(() => {
+  const handlePrevious = useCallback(() => {
     setShouldResetProgress(true);
     if (innerCurrent > 0) {
       setInnerCurrent(innerCurrent - 1);
     } else if (current > 0) {
       api?.scrollPrev();
-      setInnerCurrent(apiData[current - 1].news.length - 1);
+      setInnerCurrent((apiData[current - 1]?.news?.length || 1) - 1);
     } else {
       api?.scrollTo(apiData.length - 1);
-      setInnerCurrent(apiData[apiData.length - 1].news.length - 1);
+      setInnerCurrent((apiData[apiData.length - 1]?.news?.length || 1) - 1);
     }
   }, [api, current, innerCurrent, apiData]);
 
   const handleVideoLoadedMetadata = (
-    e: React.SyntheticEvent<HTMLVideoElement, Event>
+    e: SyntheticEvent<HTMLVideoElement, Event>
   ) => {
     setVideoDuration(e.currentTarget.duration);
   };
@@ -145,6 +153,11 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
     setIsMuted(!isMuted);
   };
 
+  // Check if apiData is empty or undefined
+  if (!apiData || apiData.length === 0) {
+    return <></>;
+  }
+
   return (
     <div className="mx-auto max-h-[100vh] max-w-[100vw]">
       <Carousel
@@ -152,10 +165,10 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
         className="w-[50vh] h-[90vh] top-1/2 -translate-y-1/2"
       >
         <CarouselContent className="w-full h-full">
-          {apiData.map((item: any) => (
-            <CarouselItem key={item.id} className="w-full h-full">
+          {apiData.map((item: any, index: number) => (
+            <CarouselItem key={item.user.id} className="w-full h-full">
               <AspectRatio className="w-[50vh] h-[90vh]">
-                {item.news[innerCurrent].media.endsWith(".mp4") ? (
+                {item.news[innerCurrent]?.media?.endsWith(".mp4") ? (
                   <video
                     ref={videoRef}
                     src={item.news[innerCurrent].media}
@@ -166,8 +179,8 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
                 ) : (
                   <Image
                     fill
-                    alt={item.title}
-                    src={item.news[innerCurrent].media}
+                    alt={item.news[innerCurrent]?.description || "News image"}
+                    src={item.news[innerCurrent]?.media || "/placeholder.svg"}
                     className="object-cover object-center rounded-md"
                   />
                 )}
@@ -199,7 +212,7 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
         </div>
         <div className="absolute top-0.5 left-1/2 -translate-x-1/2 w-[45vh]">
           <div className="flex justify-center gap-1 mt-2">
-            {apiData[current].news.map((item: any, innerIndex: any) => (
+            {apiData[current]?.news?.map((item: any, innerIndex: number) => (
               <div
                 key={innerIndex}
                 className="h-0.5 w-[40vh] bg-muted rounded-full overflow-hidden"
@@ -225,21 +238,19 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
               <AvatarImage
                 className="rounded-full border-2 border-black "
                 src={
-                  apiData[current].user.avatar ||
+                  apiData[current]?.user?.avatar ||
                   "https://github.com/shadcn.png"
                 }
-                alt={apiData[current].user.first_name}
+                alt={apiData[current]?.user?.first_name || "User"}
               />
-
               <AvatarFallback>
-                {apiData[current].user.first_name.charAt(0) +
-                  apiData[current].user.last_name.charAt(0)}
+                {(apiData[current]?.user?.first_name?.charAt(0) || "") +
+                  (apiData[current]?.user?.last_name?.charAt(0) || "")}
               </AvatarFallback>
             </Avatar>
-
             <span className="text-[0.8em] font-light">
-              {apiData[current].user.first_name}{" "}
-              {apiData[current].user.last_name}
+              {apiData[current]?.user?.first_name}{" "}
+              {apiData[current]?.user?.last_name}
             </span>
           </div>
           <div className="ml-auto flex flex-row">
@@ -276,7 +287,7 @@ const CarouselNews = ({ apiData, currentUser, innerCurrentNews }: any) => {
         <div className="absolute w-full bottom-0 px-1 left-0 backdrop-contrast-200 bg-black/50">
           <TruncatedText
             maxWidth={"15em"}
-            text={apiData[current].news[innerCurrent].description}
+            text={currentNews?.description || "No description available"}
             textSize="text-[0.8em]"
           />
         </div>

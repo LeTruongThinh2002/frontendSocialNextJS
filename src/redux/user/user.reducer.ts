@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface UserState {
   userAuth: any;
   userById: any;
+  recommendUser: any;
   loading: boolean;
   error: string | null;
 }
@@ -10,6 +11,7 @@ export interface UserState {
 const initialState: UserState = {
   userAuth: null,
   userById: null,
+  recommendUser: null,
   loading: false,
   error: null,
 };
@@ -237,6 +239,36 @@ const addUserCases = (builder: any) => {
     )
     .addCase(
       "auth/changeEmail/rejected",
+      (
+        state: { loading: boolean; error: string },
+        action: { payload: string }
+      ) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      }
+    )
+
+    // recommend user
+    .addCase(
+      "user/recommendUser/pending",
+      (state: { loading: boolean; error: null }) => {
+        state.loading = true;
+        state.error = null;
+      }
+    )
+    .addCase(
+      "user/recommendUser/fulfilled",
+      (
+        state: { loading: boolean; recommendUser: any; error: null },
+        action: { payload: any }
+      ) => {
+        state.loading = false;
+        state.recommendUser = action.payload.recommendUsers;
+        state.error = null;
+      }
+    )
+    .addCase(
+      "user/recommendUser/rejected",
       (
         state: { loading: boolean; error: string },
         action: { payload: string }

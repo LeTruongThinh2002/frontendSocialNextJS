@@ -62,11 +62,12 @@ export const addNewsCases = (builder: any) => {
     .addCase(
       newsActions.fetchLatestNews.fulfilled,
       (
-        state: { loading: boolean; latestNews: any[] },
+        state: { loading: boolean; latestNews: any[]; error: any },
         action: PayloadAction<any[]>
       ) => {
         state.loading = false;
         state.latestNews = action.payload;
+        state.error = null;
       }
     )
     .addCase(
