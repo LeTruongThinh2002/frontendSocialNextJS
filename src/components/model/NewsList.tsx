@@ -8,7 +8,7 @@ import CarouselNews from "../ui/carousel-news";
 const NewsList = ({
   children,
   listNews,
-  currentUser = 0,
+  currentUser,
   innerCurrentNews = 0,
 }: {
   children: React.ReactNode;

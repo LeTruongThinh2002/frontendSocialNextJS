@@ -47,10 +47,6 @@ const CurrentPost = ({
     }
   }, [dispatch, post.id, type]);
 
-  if (error || reelError) {
-    return <CommentSkeleton />;
-  }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -59,6 +55,7 @@ const CurrentPost = ({
             e.stopPropagation();
             handleOpen();
           }}
+          className="w-full"
         >
           {children}
         </div>

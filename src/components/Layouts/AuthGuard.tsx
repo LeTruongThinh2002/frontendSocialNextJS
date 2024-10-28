@@ -45,13 +45,12 @@ export const AuthGuard: React.FC<{ children: React.ReactNode }> = ({
     checkAuthAndFetch();
   }, [user, loading, dispatch, router]);
 
+  if (!userAuth && !userLoading) {
+    dispatch(fetchAuthUserInfoAction());
+  }
   // Show loading page while checking authentication
   if (loading) {
     return <LoadingPage />;
-  }
-
-  if (!userAuth && !userLoading) {
-    dispatch(fetchAuthUserInfoAction());
   }
 
   // Show authentication page if the user is not authenticated

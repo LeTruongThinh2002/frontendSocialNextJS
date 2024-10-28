@@ -1,21 +1,22 @@
 "use client";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-import { Button } from "./button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./card";
-import { LuMoreHorizontal } from "react-icons/lu";
-import { GoHeart } from "react-icons/go";
-import { AiOutlineComment } from "react-icons/ai";
-import { LiaTelegramPlane } from "react-icons/lia";
 import { HiCheckBadge } from "react-icons/hi2";
-import { AiOutlineSend } from "react-icons/ai";
 import ImageList from "./image-list";
-import { Input } from "./input";
-import { useState } from "react";
 import TruncatedText from "./truncate-text";
 import Link from "next/link";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
+import PostActionHeader from "./post-action-header";
+import CurrentPost from "../model/CurrentPost";
+import ActionComment from "./action-comment";
+import ActionLike from "./action-like";
+import PostsLoading from "@/app/home/@posts/loading";
 
-const Post = () => {
-  const [cmt, setCmt] = useState("");
+const Post = ({ post, follow }: { post: any; follow: boolean }) => {
+  const { userAuth } = useSelector((state: RootState) => state.user);
+
+  if (!userAuth) return <PostsLoading />;
 
   return (
     <Card className="w-full border-0 rounded-none">
@@ -24,81 +25,69 @@ const Post = () => {
           <Avatar className="p-0.5 cursor-pointer bg-gradient-to-tr from-yellow-300 via-rose-500 to-indigo-500 to-90%">
             <AvatarImage
               className="rounded-full border-2 border-black "
-              src="https://github.com/shadcn.png"
-              alt="@shadcn"
+              src={post?.user?.avatar}
+              alt={post?.user?.first_name}
             />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarFallback>
+              {post?.user?.first_name.charAt(0)}
+              {post?.user?.last_name.charAt(0)}
+            </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <div className="flex flex-row items-center gap-1">
-              <Link href={"/profile"} className="cursor-pointer">
-                <span className="text-lg font-bold">name user</span>
+              <Link
+                href={`/profile/${post?.user?.id}`}
+                className="cursor-pointer"
+              >
+                <span className="text-lg font-bold">
+                  {post?.user?.first_name} {post?.user?.last_name}
+                </span>
               </Link>
               <HiCheckBadge className="text-sky-600" size={"0.8em"} />
-              <span className="text-sm font-light text-gray-400">2 mouth</span>
+              <span className="text-sm font-light text-gray-400">
+                {post?.created_at &&
+                  new Date(post?.created_at).toLocaleDateString()}
+              </span>
             </div>
             <span className="text-sm font-semibold text-gray-500">
-              description
+              {follow ? "Followed" : "Recommend for you"}
             </span>
           </div>
         </CardTitle>
-        <Button className="ml-auto text-white">
-          <LuMoreHorizontal size={"1.5em"} />
-        </Button>
+        <PostActionHeader post={post} userAuth={userAuth} />
       </CardHeader>
       <CardContent>
-        <ImageList
-          images={[
-            "https://images.pexels.com/photos/14590086/pexels-photo-14590086.jpeg",
-          ]}
-        />
+        <ImageList images={post?.media} />
       </CardContent>
-      <CardContent className="flex flex-row gap-4">
-        <GoHeart size={"1.5em"} />
-        <AiOutlineComment size={"1.5em"} />
-        <LiaTelegramPlane size={"1.5em"} />
-        <div className="ml-auto font-semibold text-sm">123.000 like</div>
+      <CardContent className="py-0 flex flex-row items-center">
+        <ActionLike post={post} type="post" />
+        <div className="ml-auto font-semibold text-sm">
+          {Object.keys(post?.like).length} like
+        </div>
       </CardContent>
       <CardContent className="flex flex-col">
         <div className="flex flex-row gap-1 items-center">
-          <span className="font-bold text-sm">user name</span>
+          <span className="font-bold text-sm">
+            {post?.user?.first_name} {post?.user?.last_name}
+          </span>
           <HiCheckBadge className="text-sky-600" size={"0.8em"} />
         </div>
         {/* <span className={`text-sm font-light ${!seeMore && ` truncate ...`}`}>
           
         </span> */}
-        <TruncatedText
-          text={`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vel
-          turpis vel neque ultrices placerat. Nullam non enim vel velit semper
-          pellentesque.`}
-          textSize={"text-sm"}
-        />
-        <div className="pt-1 text-sm text-gray-400 font-semibold hover:underline cursor-pointer">
-          See 188 comments
-        </div>
+        <TruncatedText text={post?.description} textSize={"text-sm"} />
+        <CurrentPost post={post} type="post">
+          <div className="pt-1 text-sm text-gray-400 font-semibold hover:underline cursor-pointer">
+            {post?.comments > 0
+              ? `See ${post?.comments} comments`
+              : "0 comments"}
+          </div>
+        </CurrentPost>
       </CardContent>
       <CardFooter className="flex flex-row gap-2">
-        <Avatar className="p-0.5 cursor-pointer bg-gradient-to-tr from-yellow-300 via-rose-500 to-indigo-500 to-90%">
-          <AvatarImage
-            className="rounded-full border-2 border-black "
-            src="https://github.com/shadcn.png"
-            alt="@shadcn"
-          />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-        <Input
-          className="border-0 placeholder:text-gray-400 border-b border-gray-400 rounded-none"
-          placeholder="Enter your comment..."
-          onChange={(e): any => setCmt(e.target.value)}
-        />
-        <AiOutlineSend
-          size={"1.5em"}
-          className={
-            cmt
-              ? "cursor-pointer hover:text-sky-500"
-              : "text-gray-500 cursor-none"
-          }
-        />
+        <CurrentPost post={post} type="post">
+          <ActionComment post={post} type="post" />
+        </CurrentPost>
       </CardFooter>
     </Card>
   );

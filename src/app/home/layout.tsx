@@ -5,14 +5,22 @@ import NewsLoading from "./@news/loading";
 import PostsLoading from "./@posts/loading";
 import SidebarRightLoading from "@/components/Layouts/Sidebar-right-loading";
 import SidebarRight from "@/components/Layouts/Sidebar-right";
+import RecommendPostsLoading from "./@recommendPost/loading";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 type LayoutProps = {
   children: ReactNode;
   news: ReactNode;
   posts: ReactNode;
+  recommendPost: ReactNode;
 };
 
-const Layout: FC<LayoutProps> = ({ children, news, posts }) => {
+const Layout: FC<LayoutProps> = ({ children, news, posts, recommendPost }) => {
   return (
     <LayoutHome>
       <div className="grid lg:grid-cols-12 grid-rows-12 w-full h-full">
@@ -22,7 +30,26 @@ const Layout: FC<LayoutProps> = ({ children, news, posts }) => {
             <Suspense fallback={<NewsLoading />}>{news}</Suspense>
             {children}
             <div className="md:w-[70%] w-full">
-              <Suspense fallback={<PostsLoading />}>{posts}</Suspense>
+              <Accordion defaultValue="item-1" type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>Latest Posts</AccordionTrigger>
+                  <AccordionContent>
+                    <Suspense fallback={<PostsLoading />}>{posts}</Suspense>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
+            <div className="md:w-[70%] w-full">
+              <Accordion defaultValue="item-1" type="single" collapsible>
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>Recommend Posts</AccordionTrigger>
+                  <AccordionContent>
+                    <Suspense fallback={<RecommendPostsLoading />}>
+                      {recommendPost}
+                    </Suspense>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </div>
         </div>
