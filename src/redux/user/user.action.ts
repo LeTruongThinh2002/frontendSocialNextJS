@@ -272,3 +272,27 @@ export const changeEmailAction = createAsyncThunk<
     );
   }
 });
+
+export const recommendUserAction = createAsyncThunk<
+  any,
+  void,
+  { rejectValue: string }
+>("user/recommendUser", async (_, { rejectWithValue }) => {
+  try {
+    const accessToken = Cookies.get("access_token");
+    if (!accessToken)
+      return rejectWithValue("No access token found. Please log in again.");
+
+    return await apiRequest(
+      "https://backend-social-laravel.vercel.app/api/api/users/recommend",
+      "GET",
+      accessToken
+    );
+  } catch (error) {
+    return rejectWithValue(
+      error instanceof Error
+        ? error.message
+        : "An error occurred while fetching the user profile."
+    );
+  }
+});
