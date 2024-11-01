@@ -175,7 +175,7 @@ const reelSlice = createSlice({
         (state, action: PayloadAction<{ data: any }>) => {
           state.loading = false;
           state.reels =
-            state.reels.length > 0
+            Object.keys(state.reels).length > 0
               ? state.reels.map((reel) => {
                   if (reel.id === action.payload.data.id) {
                     return action.payload.data;
@@ -184,7 +184,7 @@ const reelSlice = createSlice({
                 })
               : [];
           state.userReels =
-            state.userReels.length > 0
+            Object.keys(state.userReels).length > 0
               ? state.userReels.map((reel) => {
                   if (reel.id === action.payload.data.id) {
                     return action.payload.data;

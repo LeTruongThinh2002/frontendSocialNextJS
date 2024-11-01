@@ -54,7 +54,7 @@ const Post = ({ post, follow }: { post: any; follow: boolean }) => {
             </span>
           </div>
         </CardTitle>
-        <PostActionHeader post={post} userAuth={userAuth} />
+        <PostActionHeader post={post} userAuth={userAuth} type="post" />
       </CardHeader>
       <CardContent>
         <ImageList images={post?.media} />
