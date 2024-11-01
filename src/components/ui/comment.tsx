@@ -100,7 +100,11 @@ const Comment = ({
           </div>
 
           <span className="text-[1em] font-semibold text-gray-400">
-            {new Date(comment.created_at).toLocaleDateString()}
+            {new Date(comment.created_at).toLocaleDateString("vi-VN", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
           </span>
         </div>
         {comment.like.some((like: any) => like.id === userAuth.id) ? (
