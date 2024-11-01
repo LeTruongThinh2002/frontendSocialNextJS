@@ -89,88 +89,14 @@ const addUserCases = (builder: any) => {
 
     // follow user
     .addCase(
-      "auth/followUser/pending",
+      "user/followUser/pending",
       (state: { loading: boolean; error: null }) => {
         state.loading = true;
         state.error = null;
       }
     )
     .addCase(
-      "auth/followUser/fulfilled",
-      (
-        state: { loading: boolean; userAuth: any; userById: any; error: null },
-        action: { payload: any }
-      ) => {
-        state.loading = false;
-        state.userAuth = {
-          ...state.userAuth,
-          userFollow: action.payload,
-        };
-        if (state.userById) {
-          // Assuming action.payload is an array of followers we want to keep
-          const updatedFollowers = state.userById.userFollower.filter(
-            (follower: any) =>
-              action.payload.some(
-                (newFollower: any) => newFollower.id === follower.id
-              )
-          );
-
-          state.userById.userFollow = updatedFollowers;
-        }
-        state.error = null;
-      }
-    )
-    .addCase(
-      "auth/followUser/rejected",
-      (
-        state: { loading: boolean; error: string },
-        action: { payload: string }
-      ) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      }
-    )
-
-    // block user
-    .addCase(
-      "auth/blockUser/pending",
-      (state: { loading: boolean; error: null }) => {
-        state.loading = true;
-        state.error = null;
-      }
-    )
-    .addCase(
-      "auth/blockUser/fulfilled",
-      (
-        state: { loading: boolean; userAuth: any; error: null },
-        action: { payload: any }
-      ) => {
-        state.loading = false;
-        state.userAuth = { ...state.userAuth, userBlock: action.payload };
-        state.error = null;
-      }
-    )
-    .addCase(
-      "auth/blockUser/rejected",
-      (
-        state: { loading: boolean; error: string },
-        action: { payload: string }
-      ) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      }
-    )
-
-    // Update user profile (for logged-in user)
-    .addCase(
-      "auth/updateUserProfile/pending",
-      (state: { loading: boolean; error: null }) => {
-        state.loading = true;
-        state.error = null;
-      }
-    )
-    .addCase(
-      "auth/updateUserProfile/fulfilled",
+      "user/followUser/fulfilled",
       (
         state: { loading: boolean; userAuth: any; error: null },
         action: { payload: any }
@@ -184,7 +110,70 @@ const addUserCases = (builder: any) => {
       }
     )
     .addCase(
-      "auth/updateUserProfile/rejected",
+      "user/followUser/rejected",
+      (
+        state: { loading: boolean; error: string },
+        action: { payload: string }
+      ) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      }
+    )
+
+    // block user
+    .addCase(
+      "user/blockUser/pending",
+      (state: { loading: boolean; error: null }) => {
+        state.loading = true;
+        state.error = null;
+      }
+    )
+    .addCase(
+      "user/blockUser/fulfilled",
+      (
+        state: { loading: boolean; userAuth: any; error: null },
+        action: { payload: any }
+      ) => {
+        state.loading = false;
+        state.userAuth = { ...state.userAuth, userBlock: action.payload };
+        state.error = null;
+      }
+    )
+    .addCase(
+      "user/blockUser/rejected",
+      (
+        state: { loading: boolean; error: string },
+        action: { payload: string }
+      ) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      }
+    )
+
+    // Update user profile (for logged-in user)
+    .addCase(
+      "user/updateUserProfile/pending",
+      (state: { loading: boolean; error: null }) => {
+        state.loading = true;
+        state.error = null;
+      }
+    )
+    .addCase(
+      "user/updateUserProfile/fulfilled",
+      (
+        state: { loading: boolean; userAuth: any; error: null },
+        action: { payload: any }
+      ) => {
+        state.loading = false;
+        state.userAuth = {
+          ...state.userAuth,
+          userFollow: action.payload.userFollow,
+        };
+        state.error = null;
+      }
+    )
+    .addCase(
+      "user/updateUserProfile/rejected",
       (
         state: { loading: boolean; error: string },
         action: { payload: string }
@@ -195,21 +184,21 @@ const addUserCases = (builder: any) => {
     )
     // Change password (for logged-in user)
     .addCase(
-      "auth/changePassword/pending",
+      "user/changePassword/pending",
       (state: { loading: boolean; error: null }) => {
         state.loading = true;
         state.error = null;
       }
     )
     .addCase(
-      "auth/changePassword/fulfilled",
+      "user/changePassword/fulfilled",
       (state: { loading: boolean; error: null }) => {
         state.loading = false;
         state.error = null;
       }
     )
     .addCase(
-      "auth/changePassword/rejected",
+      "user/changePassword/rejected",
       (
         state: { loading: boolean; error: string },
         action: { payload: string }
@@ -220,14 +209,14 @@ const addUserCases = (builder: any) => {
     )
     // Change email (for logged-in user)
     .addCase(
-      "auth/changeEmail/pending",
+      "user/changeEmail/pending",
       (state: { loading: boolean; error: null }) => {
         state.loading = true;
         state.error = null;
       }
     )
     .addCase(
-      "auth/changeEmail/fulfilled",
+      "user/changeEmail/fulfilled",
       (
         state: { loading: boolean; userAuth: any; error: null },
         action: { payload: { new_email: any } }
@@ -238,7 +227,7 @@ const addUserCases = (builder: any) => {
       }
     )
     .addCase(
-      "auth/changeEmail/rejected",
+      "user/changeEmail/rejected",
       (
         state: { loading: boolean; error: string },
         action: { payload: string }

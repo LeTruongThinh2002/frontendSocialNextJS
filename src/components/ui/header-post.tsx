@@ -53,7 +53,7 @@ const HeaderPost = ({ post }: { post: any }) => {
           </span>
         </div>
       </CardTitle>
-      <PostActionHeader post={post} userAuth={userAuth} />
+      <PostActionHeader post={post} userAuth={userAuth} type="post" />
     </CardHeader>
   );
 };

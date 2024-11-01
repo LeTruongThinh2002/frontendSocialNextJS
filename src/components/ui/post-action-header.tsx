@@ -7,7 +7,15 @@ import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import { followUserAction, blockUserAction } from "@/redux/user/user.action";
 
-const PostActionHeader = ({ post, userAuth }: { post: any; userAuth: any }) => {
+const PostActionHeader = ({
+  post,
+  userAuth,
+  type = "post",
+}: {
+  post: any;
+  userAuth: any;
+  type: string | null;
+}) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -60,7 +68,9 @@ const PostActionHeader = ({ post, userAuth }: { post: any; userAuth: any }) => {
         )}
         {post.user.id === userAuth?.id && (
           <EditPost post={post}>
-            <Button className="w-full py-2">Edit post</Button>
+            <Button className="w-full py-2">
+              Edit {type === "post" ? "post" : "reel"}
+            </Button>
           </EditPost>
         )}
 
@@ -77,7 +87,7 @@ const PostActionHeader = ({ post, userAuth }: { post: any; userAuth: any }) => {
           </Button>
         )}
         <Button className="w-full py-2" variant="ghost">
-          Go to post
+          Go to {type === "post" ? "post" : "reel"}
         </Button>
         <Button
           className="w-full py-2"
@@ -87,7 +97,7 @@ const PostActionHeader = ({ post, userAuth }: { post: any; userAuth: any }) => {
             setOpen(false);
           }}
         >
-          Share this account
+          Share this {type === "post" ? "post" : "reel"}
         </Button>
         <Button
           className="w-full py-2"
