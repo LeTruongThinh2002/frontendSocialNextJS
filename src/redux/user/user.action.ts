@@ -37,12 +37,18 @@ interface ChangeEmailResponse {
   // Add fields returned by the change email API
 }
 
-const apiRequest = async (url: string, method: string, accessToken: string) => {
+const apiRequest = async (
+  url: string,
+  method: string,
+  accessToken: string,
+  body?: any
+) => {
   const response = await fetch(url, {
     method,
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
+    body: JSON.stringify(body),
   });
 
   if (response.ok) {
@@ -293,6 +299,30 @@ export const recommendUserAction = createAsyncThunk<
       error instanceof Error
         ? error.message
         : "An error occurred while fetching the user profile."
+    );
+  }
+});
+
+export const searchUserAction = createAsyncThunk<
+  any,
+  string,
+  { rejectValue: string }
+>("user/searchUser", async (search, { rejectWithValue }) => {
+  try {
+    const accessToken = Cookies.get("access_token");
+    if (!accessToken)
+      return rejectWithValue("No access token found. Please log in again.");
+
+    return await apiRequest(
+      `https://backend-social-laravel.vercel.app/api/api/users/search?query=${search}`,
+      "GET",
+      accessToken
+    );
+  } catch (error) {
+    return rejectWithValue(
+      error instanceof Error
+        ? error.message
+        : "An error occurred while searching the user."
     );
   }
 });

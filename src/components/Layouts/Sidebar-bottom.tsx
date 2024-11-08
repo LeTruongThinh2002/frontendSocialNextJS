@@ -13,9 +13,14 @@ import { PiFilmReel } from "react-icons/pi";
 import { TiMessages } from "react-icons/ti";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { IoIosAddCircleOutline } from "react-icons/io";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
+import SearchUser from "../model/SearchUser";
+import { BiSearchAlt } from "react-icons/bi";
 
 const SidebarBottom = ({ ...props }) => {
   const path = usePathname();
+  const { userAuth } = useSelector((state: RootState) => state.user);
 
   return (
     <div {...props}>
@@ -57,6 +62,17 @@ const SidebarBottom = ({ ...props }) => {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
+              <SearchUser>
+                <NavigationMenuLink
+                  className={`${navigationMenuTriggerStyle()} ${
+                    path === "/search" ? `text-sky-400` : `text-white`
+                  }`}
+                >
+                  <BiSearchAlt size={"2em"} />
+                </NavigationMenuLink>
+              </SearchUser>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
               <Link href="/message" legacyBehavior passHref>
                 <NavigationMenuLink
                   className={`${navigationMenuTriggerStyle()} ${
@@ -73,10 +89,13 @@ const SidebarBottom = ({ ...props }) => {
                   <Avatar className="p-0.5 cursor-pointer bg-gradient-to-tr from-yellow-300 via-rose-500 to-indigo-500 to-90%">
                     <AvatarImage
                       className="rounded-full border-2 border-black "
-                      src="https://github.com/shadcn.png"
-                      alt="@shadcn"
+                      src={userAuth?.avatar}
+                      alt={userAuth?.first_name}
                     />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback>
+                      {userAuth?.first_name[0]}
+                      {userAuth?.last_name[0]}
+                    </AvatarFallback>
                   </Avatar>
                 </NavigationMenuLink>
               </Link>
