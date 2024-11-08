@@ -11,18 +11,18 @@ import Link from "next/link";
 
 const RecommendUser = ({ user }: { user: any }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    user: authUser,
-    loading,
-    error,
-  } = useSelector((state: RootState) => state.auth);
-  const [isFollowed, setIsFollowed] = useState(false);
+  const { userAuth, loading, error } = useSelector(
+    (state: RootState) => state.user
+  );
+  const [isFollowed, setIsFollowed] = useState(
+    userAuth?.userFollow?.some((follow: any) => follow.id === user.id)
+  );
 
   useEffect(() => {
     setIsFollowed(
-      authUser?.userFollow?.some((follow: any) => follow.id === user.id)
+      userAuth?.userFollow?.some((follow: any) => follow.id === user.id)
     );
-  }, [authUser, user]);
+  }, [userAuth, user]);
 
   const handleFollow = useCallback(async () => {
     await dispatch(followUserAction(user.id));
@@ -33,7 +33,7 @@ const RecommendUser = ({ user }: { user: any }) => {
   }
 
   return (
-    <div className="flex flex-row gap-2 items-center">
+    <div className="flex flex-row gap-2 items-center w-full">
       <Link
         href={`/profile/${user.id}`}
         className="cursor-pointer flex flex-row gap-2 items-center"
@@ -42,7 +42,9 @@ const RecommendUser = ({ user }: { user: any }) => {
       </Link>
       <Button
         onClick={handleFollow}
-        className={`ml-auto text-sky-400 text-sm font-semibold ${
+        className={`ml-auto ${
+          isFollowed ? "text-red-400" : "text-sky-400"
+        } text-sm font-semibold ${
           loading ? "opacity-50 cursor-not-allowed spinner" : ""
         }`}
       >

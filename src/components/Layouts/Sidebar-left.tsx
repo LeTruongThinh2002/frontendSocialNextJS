@@ -16,6 +16,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import SearchUser from "../model/SearchUser";
 
 const SidebarLeft = ({ ...props }) => {
   const path = usePathname();
@@ -82,7 +83,7 @@ const SidebarLeft = ({ ...props }) => {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/search" legacyBehavior passHref>
+                <SearchUser>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} ${
                       path === "/search" ? `text-sky-400` : `text-white`
@@ -90,7 +91,7 @@ const SidebarLeft = ({ ...props }) => {
                   >
                     <BiSearchAlt size={"2em"} />
                   </NavigationMenuLink>
-                </Link>
+                </SearchUser>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <Link href={`/profile/${user?.id}`} legacyBehavior passHref>

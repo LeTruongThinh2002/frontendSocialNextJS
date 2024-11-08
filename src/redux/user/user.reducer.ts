@@ -4,6 +4,7 @@ export interface UserState {
   userAuth: any;
   userById: any;
   recommendUser: any;
+  searchUser: any;
   loading: boolean;
   error: string | null;
 }
@@ -12,6 +13,7 @@ const initialState: UserState = {
   userAuth: null,
   userById: null,
   recommendUser: null,
+  searchUser: null,
   loading: false,
   error: null,
 };
@@ -258,6 +260,36 @@ const addUserCases = (builder: any) => {
     )
     .addCase(
       "user/recommendUser/rejected",
+      (
+        state: { loading: boolean; error: string },
+        action: { payload: string }
+      ) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      }
+    )
+
+    // search user
+    .addCase(
+      "user/searchUser/pending",
+      (state: { loading: boolean; error: null }) => {
+        state.loading = true;
+        state.error = null;
+      }
+    )
+    .addCase(
+      "user/searchUser/fulfilled",
+      (
+        state: { loading: boolean; searchUser: any; error: null },
+        action: { payload: any }
+      ) => {
+        state.loading = false;
+        state.searchUser = action.payload.data;
+        state.error = null;
+      }
+    )
+    .addCase(
+      "user/searchUser/rejected",
       (
         state: { loading: boolean; error: string },
         action: { payload: string }

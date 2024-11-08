@@ -22,9 +22,11 @@ const CardOtherUser = ({ user }: { user: any }) => {
           </span>
           <HiCheckBadge className="text-sky-600" size={"0.8em"} />
         </div>
-        <span className="text-sm font-light text-gray-400">
-          {user.follow_count} Followers
-        </span>
+        {user.follow_count && (
+          <span className="text-sm font-light text-gray-400">
+            {user.follow_count} Followers
+          </span>
+        )}
       </div>
     </>
   );
