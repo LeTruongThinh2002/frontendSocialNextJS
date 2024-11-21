@@ -11,16 +11,17 @@ import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { TbHomeEco } from "react-icons/tb";
 import { PiFilmReel } from "react-icons/pi";
 import { TiMessages } from "react-icons/ti";
-import { BiSearchAlt } from "react-icons/bi";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
+import StoreMedia from "../model/StoreMedia";
 import SearchUser from "../model/SearchUser";
+import { BiSearchAlt } from "react-icons/bi";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const SidebarLeft = ({ ...props }) => {
   const path = usePathname();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const { userAuth } = useSelector((state: RootState) => state.user);
 
   return (
     <div {...props}>
@@ -72,7 +73,7 @@ const SidebarLeft = ({ ...props }) => {
                 </Link>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/add" legacyBehavior passHref>
+                <StoreMedia>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} ${
                       path === "/add" ? `text-sky-400` : `text-white`
@@ -80,7 +81,7 @@ const SidebarLeft = ({ ...props }) => {
                   >
                     <IoIosAddCircleOutline size={"2em"} />
                   </NavigationMenuLink>
-                </Link>
+                </StoreMedia>
               </NavigationMenuItem>
               <NavigationMenuItem>
                 <SearchUser>
@@ -94,17 +95,19 @@ const SidebarLeft = ({ ...props }) => {
                 </SearchUser>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href={`/profile/${user?.id}`} legacyBehavior passHref>
+                <Link href={`/profile/${userAuth?.id}`} legacyBehavior passHref>
                   <NavigationMenuLink>
                     <Avatar className="p-0.5 cursor-pointer bg-gradient-to-tr from-yellow-300 via-rose-500 to-indigo-500 to-90%">
                       <AvatarImage
                         className="rounded-full border-2 border-black "
-                        src={user?.avatar || "https://github.com/shadcn.png"}
-                        alt={user?.name || "User"}
+                        src={
+                          userAuth?.avatar || "https://github.com/shadcn.png"
+                        }
+                        alt={userAuth?.name || "User"}
                       />
                       <AvatarFallback>
-                        {user?.first_name?.charAt(0) +
-                          user?.last_name?.charAt(0) || "U"}
+                        {userAuth?.first_name?.charAt(0) +
+                          userAuth?.last_name?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
                   </NavigationMenuLink>

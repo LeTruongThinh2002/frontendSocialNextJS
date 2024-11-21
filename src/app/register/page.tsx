@@ -158,6 +158,9 @@ const Register = () => {
                       ? new Date(field.value).toISOString().split("T")[0]
                       : ""
                   }
+                  onChange={(e) => {
+                    field.onChange(new Date(e.target.value));
+                  }}
                   max={new Date().toISOString().split("T")[0]}
                 />
               </FormControl>

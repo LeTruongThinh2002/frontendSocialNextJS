@@ -4,6 +4,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { HiCheckBadge } from "react-icons/hi2";
 
 const DescriptionPost = ({ post }: { post: any }) => {
+  const isValidJson = (json: string) => {
+    try {
+      JSON.parse(json);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
   return (
     <div className="flex flex-col gap-1 bg-slate-400/10 rounded-lg p-1">
       <div className="flex flex-row items-center gap-2 text-sm ">
@@ -34,7 +42,11 @@ const DescriptionPost = ({ post }: { post: any }) => {
         </div>
       </div>
       <TruncatedText
-        text={`${post.description}`}
+        text={
+          isValidJson(post.description)
+            ? JSON.parse(post.description).html
+            : post.description
+        }
         maxWidth={"100%"}
         textSize={"text-sm"}
       />

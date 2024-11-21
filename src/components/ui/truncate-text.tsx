@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 interface TruncatedTextProps {
   text: string;
   textSize: string;
-  maxWidth?: string | number; // Chiều rộng tối đa của phần tử
+  maxWidth?: string | number;
 }
 
 const TruncatedText: React.FC<TruncatedTextProps> = ({
@@ -13,26 +13,28 @@ const TruncatedText: React.FC<TruncatedTextProps> = ({
 }) => {
   const [isTruncated, setIsTruncated] = useState(false);
   const [showFullText, setShowFullText] = useState(false);
-  const textRef = useRef<HTMLParagraphElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkTruncation = () => {
       if (textRef.current) {
-        // Tạo một phần tử clone để đo chiều rộng tự nhiên của văn bản
         const clone = textRef.current.cloneNode(true) as HTMLElement;
+        clone.style.position = "absolute";
         clone.style.visibility = "hidden";
         clone.style.whiteSpace = "nowrap";
+        clone.style.width = `${maxWidth}`;
         document.body.appendChild(clone);
 
-        const naturalWidth = clone.offsetWidth;
-        document.body.removeChild(clone);
+        const isOverflowing =
+          clone.scrollWidth > clone.clientWidth ||
+          clone.scrollHeight > clone.clientHeight;
+        setIsTruncated(isOverflowing);
 
-        // Kiểm tra nếu chiều rộng tự nhiên của văn bản lớn hơn chiều rộng của phần tử chứa
-        if (naturalWidth > textRef.current.offsetWidth) {
+        if (showFullText) {
           setIsTruncated(true);
-        } else {
-          setIsTruncated(false);
         }
+
+        document.body.removeChild(clone);
       }
     };
 
@@ -42,21 +44,22 @@ const TruncatedText: React.FC<TruncatedTextProps> = ({
     return () => {
       window.removeEventListener("resize", checkTruncation);
     };
-  }, [text]);
+  }, [text, maxWidth, showFullText]);
 
   return (
     <div className={`max-w-[${maxWidth}]`}>
-      <p
+      <div
         ref={textRef}
         className={
           textSize +
           ` font-light whitespace-${
-            showFullText ? "normal" : "nowrap truncate"
-          } overflow-y-auto overflow-x-hidden max-h-20 `
+            showFullText ? "normal" : "nowrap"
+          } overflow-hidden`
         }
+        style={{ maxHeight: showFullText ? "none" : "1.2em" }}
       >
-        {text}
-      </p>
+        <div className="prose" dangerouslySetInnerHTML={{ __html: text }} />
+      </div>
       {isTruncated && (
         <button
           className={
