@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-const config = {
+const config: Config = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -18,6 +18,41 @@ const config = {
       },
     },
     extend: {
+      typography: (theme: any) => ({
+        DEFAULT: {
+          css: {
+            color: theme("colors.white"),
+            "ul, ol": {
+              li: {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                "&::before": {
+                  // Đây là pseudo-element cho các dấu tích trong danh sách
+                  backgroundColor: "initial", // Sử dụng màu mặc định của trình duyệt
+                },
+                div: {
+                  padding: "10px 0px 0px 0px",
+                },
+              },
+            },
+            'input[type="checkbox"], input[type="radio"]': {
+              color: "black", // Sử dụng màu mặc định của trình duyệt cho checkbox và radio
+              backgroundColor: "initial", // Đặt lại màu nền
+            },
+            strong: { color: "inherit" },
+            p: { color: "inherit" },
+            h1: { color: "inherit" },
+            h2: { color: "inherit" },
+            h3: { color: "inherit" },
+            h4: { color: "inherit" },
+            blockquote: {
+              color: "inherit",
+              borderLeftColor: theme("colors.gray.500"),
+            },
+          },
+        },
+      }),
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -78,7 +113,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+} as Config;
 
 export default config;

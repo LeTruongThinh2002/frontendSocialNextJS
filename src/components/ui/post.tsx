@@ -75,7 +75,10 @@ const Post = ({ post, follow }: { post: any; follow: boolean }) => {
         {/* <span className={`text-sm font-light ${!seeMore && ` truncate ...`}`}>
           
         </span> */}
-        <TruncatedText text={post?.description} textSize={"text-sm"} />
+        <TruncatedText
+          text={JSON.parse(post?.description).html}
+          textSize={"text-sm"}
+        />
         <CurrentPost post={post} type="post">
           <div className="pt-1 text-sm text-gray-400 font-semibold hover:underline cursor-pointer">
             {post?.comments > 0

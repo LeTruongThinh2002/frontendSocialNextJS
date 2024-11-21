@@ -49,12 +49,22 @@ const TopPosts = () => {
         {topPosts.map((post, key) => (
           <CurrentPost key={post.id || key} type="post" post={post}>
             <AspectRatio ratio={1 / 1} className="bg-muted max-h-[30em]">
-              <Image
-                src={post.media[0]}
-                alt={post.description}
-                fill
-                className="object-cover"
-              />
+              {post.media[0] && post.media[0].endsWith(".mp4") ? (
+                <video
+                  src={`https://res.cloudinary.com/dihtpxtxy/video/upload/c_scale,h_300,w_300/${post.media[0]
+                    .split("/")
+                    .pop()}`}
+                  muted
+                  className="object-cover"
+                />
+              ) : (
+                <Image
+                  src={post.media[0]}
+                  alt={post.description}
+                  fill
+                  className="object-cover"
+                />
+              )}
             </AspectRatio>
           </CurrentPost>
         ))}

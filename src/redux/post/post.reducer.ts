@@ -15,7 +15,7 @@ export interface PostState {
 }
 
 const initialState: PostState = {
-  posts: null,
+  posts: [],
   followedPosts: null,
   currentPost: null,
   topPosts: [],
@@ -46,7 +46,7 @@ export const addPostCases = (builder: any) => {
     .addCase(
       postActions.fetchPosts.fulfilled,
       (
-        state: { loading: boolean; posts: any; error: null },
+        state: { loading: boolean; posts: any[]; error: null },
         action: PayloadAction<any>
       ) => {
         state.loading = false;
@@ -76,11 +76,11 @@ export const addPostCases = (builder: any) => {
     .addCase(
       postActions.createPost.fulfilled,
       (
-        state: { loading: boolean; posts: any[]; error: null },
+        state: { loading: boolean; posts: any; error: null },
         action: PayloadAction<any>
       ) => {
         state.loading = false;
-        state.posts.unshift(action.payload);
+        state.posts.data = [action.payload.data, ...state.posts.data];
         state.error = null;
       }
     )
