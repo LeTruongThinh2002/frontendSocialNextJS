@@ -53,13 +53,26 @@ const Posts = () => {
               ratio={1 / 1}
               className="bg-muted max-h-[30em] cursor-pointer relative aspect-ratio"
             >
-              <Image
-                src={post.media[0] || post.media}
-                alt={post.description || "Post image"}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover"
-              />
+              {post.media[0] && post.media[0].endsWith(".mp4") ? (
+                <video
+                  src={`https://res.cloudinary.com/dihtpxtxy/video/upload/c_scale,h_300,w_300/${post.media[0]
+                    .split("/")
+                    .pop()}`}
+                  muted
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={post.media[0] || post.media}
+                  alt={
+                    userById?.first_name + " " + userById?.last_name ||
+                    "Post image"
+                  }
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover"
+                />
+              )}
               <div className="overlay">
                 <div className="flex flex-row gap-4">
                   <div className="text-sm items-center flex flex-row gap-1">

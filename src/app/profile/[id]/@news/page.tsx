@@ -38,7 +38,7 @@ const News = () => {
     fetchNews();
   }, [fetchNews]);
 
-  if (loading || userLoading || userError) {
+  if ((loading || userLoading || userError) && !userNews) {
     return <ProfileNewsLoading />;
   }
 

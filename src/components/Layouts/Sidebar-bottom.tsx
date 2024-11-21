@@ -11,12 +11,13 @@ import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { TbHomeEco } from "react-icons/tb";
 import { PiFilmReel } from "react-icons/pi";
 import { TiMessages } from "react-icons/ti";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { RootState } from "@/redux/store";
-import { useSelector } from "react-redux";
-import SearchUser from "../model/SearchUser";
+import StoreMedia from "../model/StoreMedia";
 import { BiSearchAlt } from "react-icons/bi";
+import SearchUser from "../model/SearchUser";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 
 const SidebarBottom = ({ ...props }) => {
   const path = usePathname();
@@ -51,7 +52,7 @@ const SidebarBottom = ({ ...props }) => {
               </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <Link href="/add" legacyBehavior passHref>
+              <StoreMedia>
                 <NavigationMenuLink
                   className={`${navigationMenuTriggerStyle()} ${
                     path === "/add" ? `text-sky-400` : `text-white`
@@ -59,7 +60,7 @@ const SidebarBottom = ({ ...props }) => {
                 >
                   <IoIosAddCircleOutline size={"2em"} />
                 </NavigationMenuLink>
-              </Link>
+              </StoreMedia>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <SearchUser>

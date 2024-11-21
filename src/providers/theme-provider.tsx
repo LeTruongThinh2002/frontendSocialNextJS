@@ -1,6 +1,5 @@
 "use client";
-import { persistor } from "@/redux/store";
-import store from "@/redux/store";
+import store, { persistor } from "@/redux/store";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes/dist/types";
 import { Provider } from "react-redux";
